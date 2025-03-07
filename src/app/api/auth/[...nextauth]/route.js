@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "@/app/db/connectDB";
 import User from "@/app/models/User";
-// import bcrypt from "bcryptjs"; // For password hashing
+import bcrypt from "bcryptjs"; // For password hashing
 
 export const authOptions = NextAuth({
     providers: [
@@ -16,24 +16,24 @@ export const authOptions = NextAuth({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
-        // CredentialsProvider({
-        //     name: "Credentials",
-        //     credentials: {
-        //         email: { label: "Email", type: "text" },
-        //         password: { label: "Password", type: "password" },
-        //     },
-        //     async authorize(credentials) {
-        //         await connectDB();
-        //         const user = await User.findOne({ email: credentials.email });
-        //         if (user && user.password) {
-        //             const isValid = await bcrypt.compare(credentials.password, user.password);
-        //             if (isValid) {
-        //                 return user;
-        //             }
-        //         }
-        //         return null;
-        //     },
-        // }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                await connectDB();
+                const user = await User.findOne({ email: credentials.email });
+                if (user && user.password) {
+                    const isValid = await bcrypt.compare(credentials.password, user.password);
+                    if (isValid) {
+                        return user;
+                    }
+                }
+                return null;
+            },
+        }),
     ],
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
@@ -44,7 +44,7 @@ export const authOptions = NextAuth({
                 const newUser = new User({
                     name: user.name || profile?.name || user.email.split("@")[0],
                     email: user.email,
-                    // password: credentials?.password ? await bcrypt.hash(credentials.password, 10) : undefined, // Hash password if provided
+                    password: credentials?.password ? bcrypt.hash(credentials.password, 10) : undefined, // Hash password if provided
                     role: account.provider === "google" ? "ADMIN" : "USER", // Example: Google users as admins (adjust as needed)
                     username: user.email.split("@")[0],
                     createdAt: new Date(),

@@ -3,6 +3,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/app/db/connectDB";
 import Session from "@/app/models/Session";
 import User from "@/app/models/User";
+import Conference from "@/app/models/Conference";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
