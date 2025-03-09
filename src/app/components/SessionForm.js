@@ -1,10 +1,18 @@
-// /src/app/components/SessionForm.js
 "use client";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const SessionForm = ({ formData, conferences, rooms, resources, handleChange, handleSubmit, submitLabel, conferenceRange = { startDate: null, endDate: null } }) => {
+const SessionForm = ({
+  formData,
+  conferences,
+  rooms,
+  resources,
+  handleChange,
+  handleSubmit,
+  submitLabel,
+  conferenceRange = { startDate: null, endDate: null },
+}) => {
   // Handler for DatePicker changes
   const handleDateChange = (date, field) => {
     handleChange({ target: { name: field, value: date ? date.toISOString() : "" } });
@@ -23,46 +31,54 @@ const SessionForm = ({ formData, conferences, rooms, resources, handleChange, ha
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-lg space-y-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Session</h2>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Conference:</label>
-        <select
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          name="conference"
-          value={formData.conference}
-          onChange={handleChange}
-          required
-        >
-          {conferences.length === 0 ? (
-            <option value="">No conferences available</option>
-          ) : (
-            conferences.map((conf) => (
-              <option key={conf._id} value={conf._id}>
-                {conf.name} (Starts: {formatDate(conf.startDate)}, Ends: {formatDate(conf.endDate)})
-              </option>
-            ))
-          )}
-        </select>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-50 p-6 rounded-2xl shadow-lg space-y-4 max-w-4xl mx-auto transition-all duration-300"
+    >
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Create Session</h2>
+
+      {/* Conference and Title in a Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Conference:</label>
+          <select
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            name="conference"
+            value={formData.conference}
+            onChange={handleChange}
+            required
+          >
+            {conferences.length === 0 ? (
+              <option value="">No conferences available</option>
+            ) : (
+              conferences.map((conf) => (
+                <option key={conf._id} value={conf._id}>
+                  {conf.name} (Starts: {formatDate(conf.startDate)}, Ends: {formatDate(conf.endDate)})
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Title:</label>
+          <input
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            placeholder="Enter session title"
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Title:</label>
-        <input
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-          placeholder="Enter session title"
-        />
-      </div>
-
+      {/* Description - Full Width */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Description:</label>
         <textarea
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black h-24 resize-none"
+          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 h-20 resize-none shadow-sm transition-all duration-200 hover:border-indigo-300"
           name="description"
           value={formData.description}
           onChange={handleChange}
@@ -70,112 +86,122 @@ const SessionForm = ({ formData, conferences, rooms, resources, handleChange, ha
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Session Type:</label>
-        <select
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          name="sessionType"
-          value={formData.sessionType}
-          onChange={handleChange}
-          required
-        >
-          <option value="WORKSHOP">Workshop</option>
-          <option value="PRESENTATION">Presentation</option>
-          <option value="KEYNOTE">Keynote</option>
-        </select>
+      {/* Session Type and Speaker in a Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Session Type:</label>
+          <select
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            name="sessionType"
+            value={formData.sessionType}
+            onChange={handleChange}
+            required
+          >
+            <option value="WORKSHOP">Workshop</option>
+            <option value="PRESENTATION">Presentation</option>
+            <option value="KEYNOTE">Keynote</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Speaker:</label>
+          <input
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            type="text"
+            name="speaker"
+            value={formData.speaker}
+            onChange={handleChange}
+            placeholder="Enter speaker name"
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Speaker:</label>
-        <input
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          type="text"
-          name="speaker"
-          value={formData.speaker}
-          onChange={handleChange}
-          placeholder="Enter speaker name"
-        />
-      </div>
+      {/* Start Time and End Time Side by Side */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Start Time:</label>
+          <DatePicker
+            selected={formData.startTime ? new Date(formData.startTime) : null}
+            onChange={(date) => handleDateChange(date, "startTime")}
+            showTimeSelect
+            timeIntervals={15}
+            dateFormat="Pp"
+            minDate={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
+            maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
+            initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            placeholderText="Select start time"
+            required
+          />
+        </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Start Time:</label>
-        <DatePicker
-          selected={formData.startTime ? new Date(formData.startTime) : null}
-          onChange={(date) => handleDateChange(date, "startTime")}
-          showTimeSelect
-          timeIntervals={15}
-          dateFormat="Pp"
-          minDate={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
-          maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
-          initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black max-w-xs"
-          placeholderText="Select start time"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">End Time:</label>
-        <DatePicker
-          selected={formData.endTime ? new Date(formData.endTime) : null}
-          onChange={(date) => handleDateChange(date, "endTime")}
-          showTimeSelect
-          timeIntervals={15}
-          dateFormat="Pp"
-          minDate={
-            conferenceRange.startDate
-              ? getValidDate(conferenceRange.startDate)
-              : formData.startTime
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">End Time:</label>
+          <DatePicker
+            selected={formData.endTime ? new Date(formData.endTime) : null}
+            onChange={(date) => handleDateChange(date, "endTime")}
+            showTimeSelect
+            timeIntervals={15}
+            dateFormat="Pp"
+            minDate={
+              conferenceRange.startDate
+                ? getValidDate(conferenceRange.startDate)
+                : formData.startTime
                 ? new Date(formData.startTime)
                 : null
-          }
-          maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
-          initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black max-w-xs"
-          placeholderText="Select end time"
-          required
-        />
+            }
+            maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
+            initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            placeholderText="Select end time"
+            required
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Room:</label>
-        <select
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          name="room"
-          value={formData.room}
-          onChange={handleChange}
-        >
-          <option value="">Select a room (optional)</option>
-          {rooms.map((room) => (
-            <option key={room._id} value={room._id}>
-              {room.roomNumber}
-            </option>
-          ))}
-        </select>
+      {/* Room and Resource Side by Side */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Room:</label>
+          <select
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            name="room"
+            value={formData.room}
+            onChange={handleChange}
+          >
+            <option value="">Select a room (optional)</option>
+            {rooms.map((room) => (
+              <option key={room._id} value={room._id}>
+                {room.roomNumber}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Resource:</label>
+          <select
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            name="resourceId"
+            value={formData.resourceId}
+            onChange={handleChange}
+          >
+            <option value="">Select a resource (optional)</option>
+            {resources.map((res) => (
+              <option key={res._id} value={res._id}>
+                {res.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Resource:</label>
-        <select
-          className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-          name="resourceId"
-          value={formData.resourceId}
-          onChange={handleChange}
-        >
-          <option value="">Select a resource (optional)</option>
-          {resources.map((res) => (
-            <option key={res._id} value={res._id}>
-              {res.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
+      {/* Resource Quantity (Conditional) */}
       {formData.resourceId && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Resource Quantity:</label>
           <input
-            className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
             type="number"
             name="resourceQuantity"
             value={formData.resourceQuantity}
@@ -186,10 +212,13 @@ const SessionForm = ({ formData, conferences, rooms, resources, handleChange, ha
         </div>
       )}
 
-      <p className="text-sm text-gray-500 italic">Note: Sessions cannot overlap in the same room, regardless of conference or session type.</p>
+      {/* Note and Submit Button */}
+      <p className="text-sm text-gray-500 italic">
+        Note: Sessions cannot overlap in the same room, regardless of conference or session type.
+      </p>
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 transition-colors duration-200"
+        className="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-lg py-2 font-semibold hover:from-indigo-600 hover:to-blue-600 transition-all duration-300 shadow-md"
       >
         {submitLabel}
       </button>

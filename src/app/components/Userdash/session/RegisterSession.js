@@ -41,8 +41,8 @@ const RegisterSession = ({ sessions, onRegister }) => {
     };
 
     return (
-        <div className="my-4">
-            <h2 className="text-lg font-semibold text-gray-200 mb-2">Register for Session</h2>
+        <div className="my-4 flex gap-4 items-center justify-normal">
+            {/* <h2 className="text-lg font-semibold text-gray-200 mb-2">Register for Session</h2> */}
             <select
                 className="border border-gray-300 text-black rounded-md p-1 text-sm w-full max-w-xs focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={selectedSessionId}
@@ -57,7 +57,7 @@ const RegisterSession = ({ sessions, onRegister }) => {
             </select>
             <button
                 onClick={handleRegister}
-                className="mt-2 bg-blue-600 text-white rounded-md p-1 px-2 text-sm hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className=" bg-blue-600 text-white rounded-md p-1 px-2 text-sm hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-600"
             >
                 Register
             </button>

@@ -84,7 +84,7 @@ const UpdateSession = ({ formData, sessions, conferences, rooms, resources, hand
             <div className="flex flex-col">
                 <label className="mb-1">Select Session to Update:</label>
                 <select
-                    className="bg-gray-700 text-white rounded-md p-2"
+                    className="bg-gray-200 text-black rounded-md p-2"
                     value={selectedSessionId}
                     onChange={handleSessionChange}
                 >
