@@ -1,32 +1,25 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Userdash from "../components/Userdash";
-import Admindash from "../components/Admindash";
+import Userdash from "../components/Userdash/Userdash";
+import Admindash from "../components/Admindash/Admindash";
 
 const Page = () => {
-  const router = useRouter();
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session) {
-      router.push("/login");
-    }
-  }, [session, status, router]);
-
   if (status === "loading" || !session) {
-    return <p>Loading...</p>;
+    return <p className="text-white text-center">Loading...</p>;
   }
 
-  const role = session.user.role; // Assuming role is added to session
-  console.log("Current role:", role);
+  const role = session.user.role;
 
   return (
-    <div>
-      {role === "ADMIN" ? <Admindash /> : <Userdash />}
+    <div className="min-h-screen bg-gray-900 p-6">
+      <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
+      <div className="mx-auto">
+        {role === "ADMIN" ? <Admindash /> : <Userdash />}
+      </div>
     </div>
   );
 };

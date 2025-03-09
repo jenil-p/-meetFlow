@@ -1,15 +1,11 @@
-import connectDB from "@/app/db/connectDB";
-import Conference from "@/app/models/Conference";
 import { NextResponse } from "next/server";
+import Conference from "@/app/models/Conference";
 
-connectDB();
-
-export async function GET() {
+export async function GET(req) {
     try {
-        const conferences = await Conference.find({}, { _id: 1, name: 1 });
+        const conferences = await Conference.find().select("name startDate endDate"); // Explicitly select required fields
         return NextResponse.json(conferences, { status: 200 });
     } catch (error) {
-        console.error("Error fetching conferences:", error);
-        return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
+        return NextResponse.json({ message: "Error fetching conferences", error: error.message }, { status: 500 });
     }
 }

@@ -29,7 +29,7 @@ export async function POST(req) {
             email,
             password: hashedPassword,
             role: "USER", // Default role for new users
-            username: email.split("@")[0],
+            username: name,
         });
         await newUser.save();
 

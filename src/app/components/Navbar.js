@@ -1,50 +1,62 @@
-"use client"
-import React from 'react'
-import Link from 'next/link'
-import { useSession, signIn, signOut } from "next-auth/react"
-import { useEffect, useState } from 'react'
+"use client";
+import React, { useState } from "react";
+import { HoveredLink, Menu, MenuItem } from "./ui/navbar-menu";
+// import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
+import Link from 'next/link';
+import { useSession, signOut } from "next-auth/react";
 
-
-const Navbar = () => {
-  const [dropdown, setDropdown] = useState(false)
-  const { data: session } = useSession()
-
-
+export function NavbarDemo() {
   return (
-    <div className='bg-gray-900 flex justify-between items-center px-10 box-border h-16' >
-      <div className="logo text-gray-200 font-bold sm:text-2xl text-lg"><Link href={"/"}>MeetFlow</Link></div>
-      {!session &&
-        <div className="buttons flex space-x-1">
-          <ul className='flex gap-4 sm:text-lg text-sm'>
-            <Link href={"/"}><li>About</li></Link>
-            <Link href={"/"}><li>Contact</li></Link>
-            <Link href={"/login"}>Log In</Link>
-          </ul>
-        </div>
-      }
-      {session &&
-        <div className="buttons flex space-x-1 relative" data-dropdown>
-
-          <button id="dropdownDefaultButton" onClick={() => setDropdown(!dropdown)} onBlur={() => setTimeout(() => setDropdown(false), 500)}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Welcome {session.user.name}!<svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-            </svg>
-          </button>
-
-          <div id="dropdown" className={`z-10 absolute top-12 ${dropdown ? "" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700`}>
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-              <li><Link href="/dashboard" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link></li>
-              <li><Link href={`/${session.user.name}`} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Your Page</Link></li>
-              <li>
-                <Link href="/login" onClick={() => signOut()} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</Link>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      }
+    <div className="relative w-full flex items-center justify-center">
+      <Navbar className="top-2" />
     </div>
-  )
+  );
 }
 
-export default Navbar
+function Navbar({ className }) {
+  const [active, setActive] = useState(null);
+  const { data: session } = useSession();
+
+  return (
+    <div className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}>
+      <Menu setActive={setActive}>
+        {/* Logo/Home */}
+        <MenuItem setActive={setActive} active={active} item="MeetFlow">
+          <Link href="/">Home</Link>
+        </MenuItem>
+
+        {/* Conditional rendering based on session */}
+        {!session && (
+          <>
+            <MenuItem setActive={setActive} active={active} item="About">
+              <Link href="/">About</Link>
+            </MenuItem>
+            <MenuItem setActive={setActive} active={active} item="Contact">
+              <Link href="/">Contact</Link>
+            </MenuItem>
+            <MenuItem setActive={setActive} active={active} item="Log In">
+              <Link href="/login">Log In</Link>
+            </MenuItem>
+          </>
+        )}
+
+        {session && (
+          <>
+            <MenuItem setActive={setActive} active={active} item="Dashboard">
+              <Link href="/dashboard">Dashboard</Link>
+            </MenuItem>
+            <MenuItem setActive={setActive} active={active} item="Your Page">
+              <Link href={`/${session.user.name}`}>Your Page</Link>
+            </MenuItem>
+            <MenuItem setActive={setActive} active={active} item="Sign Out">
+              <Link href="/login" onClick={() => signOut()}>Sign Out</Link>
+            </MenuItem>
+          </>
+        )}
+      </Menu>
+    </div>
+  );
+}
+
+export default NavbarDemo;

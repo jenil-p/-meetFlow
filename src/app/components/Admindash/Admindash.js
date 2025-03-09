@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import AddSession from "./Admindash/session/AddSession";
-import UpdateSession from "./Admindash/session/UpdateSession";
-import DeleteSession from "./Admindash/session/DeleteSession";
-import SessionForm from "./SessionForm";
+import AddSession from "./session/AddSession";
+import UpdateSession from "./session/UpdateSession";
+import DeleteSession from "./session/DeleteSession";
+import SessionForm from "../SessionForm";
 
 export default function Admindash() {
     const { data: session, status } = useSession();
@@ -90,7 +90,7 @@ export default function Admindash() {
     };
 
     return (
-        <div className="admin-dash p-10 bg-black text-white space-y-6">
+        <div className="admin-dash p-10 text-white w-2/3 mx-auto space-y-6">
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
 
             {/* Tab Navigation */}

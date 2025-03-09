@@ -1,11 +1,78 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import SessionForm from "../../SessionForm";
 
 const AddSession = ({ formData, conferences, rooms, resources, handleChange, setMessage, setSessions, setFormData }) => {
+    const [conferenceRange, setConferenceRange] = useState({ startDate: null, endDate: null });
+    const [existingSessions, setExistingSessions] = useState([]);
+
+    // Update conferenceRange when conference changes
+    useEffect(() => {
+        if (formData.conference) {
+            const selectedConference = conferences.find((conf) => conf._id === formData.conference);
+            if (selectedConference) { // this will alyways be true
+                setConferenceRange({
+                    startDate: new Date(selectedConference.startDate),
+                    endDate: new Date(selectedConference.endDate),
+                });
+                // Reset startTime and endTime if they are outside the new range
+                if (
+                    formData.startTime &&
+                    (new Date(formData.startTime) < new Date(selectedConference.startDate) ||
+                        new Date(formData.startTime) > new Date(selectedConference.endDate))
+                ) {
+                    setFormData((prev) => ({ ...prev, startTime: "" }));
+                }
+                if (
+                    formData.endTime &&
+                    (new Date(formData.endTime) < new Date(selectedConference.startDate) ||
+                        new Date(formData.endTime) > new Date(selectedConference.endDate))
+                ) {
+                    setFormData((prev) => ({ ...prev, endTime: "" }));
+                }
+            }
+        } else {
+            setConferenceRange({ startDate: null, endDate: null });
+        }
+    }, [formData.conference, conferences, setFormData]);
+
+    // Fetch existing sessions when component mounts or conference changes
+    useEffect(() => {
+        const fetchSessions = async () => {
+            try {
+                const res = await fetch("/api/sessions", { credentials: "include" });
+                if (res.ok) {
+                    const data = await res.json();
+                    setExistingSessions(data);
+                }
+            } catch (error) {
+                console.error("Error fetching sessions:", error);
+            }
+        };
+        fetchSessions();
+    }, [formData.conference]); // Re-fetch if conference changes
+
     const handleAddSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
+
+        // Preliminary client-side overlap check
+        const sessionStart = new Date(formData.startTime);
+        const sessionEnd = new Date(formData.endTime);
+        const hasOverlap = existingSessions.some((session) => {
+            const existingStart = new Date(session.startTime);
+            const existingEnd = new Date(session.endTime);
+            return (
+                session.room === formData.room &&
+                isTimeOverlap(sessionStart, sessionEnd, existingStart, existingEnd)
+            );
+        });
+
+        if (hasOverlap) {
+            setMessage("Warning: This session may overlap with an existing session in the same room. Please verify or adjust the time/room.");
+            return;
+        }
 
         try {
             const res = await fetch("/api/sessions", {
@@ -44,11 +111,11 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
                     resourceId: "",
                     resourceQuantity: "",
                 });
-                // Refresh sessions list
                 const sessRes = await fetch("/api/sessions", { credentials: "include" });
                 const sessData = await sessRes.json();
                 if (sessRes.ok) {
                     setSessions(sessData);
+                    setExistingSessions(sessData); // Update existing sessions
                 }
             } else {
                 setMessage(data.message || "Failed to add session");
@@ -56,6 +123,11 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
         } catch (error) {
             setMessage("Error: " + error.message);
         }
+    };
+
+    // Helper function to check time overlap
+    const isTimeOverlap = (start1, end1, start2, end2) => {
+        return start1 < end2 && start2 < end1;
     };
 
     return (
@@ -69,6 +141,7 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
                 handleChange={handleChange}
                 handleSubmit={handleAddSubmit}
                 submitLabel="Add Session"
+                conferenceRange={conferenceRange}
             />
         </div>
     );
