@@ -45,7 +45,7 @@ export default function Userdash() {
     };
 
     if (status === "loading") {
-        return <p className="text-white text-center">Loading...</p>;
+        return <p className="text-gray-800 text-center">Loading...</p>;
     }
 
     if (!session || session.user.role !== "USER") {
@@ -53,14 +53,14 @@ export default function Userdash() {
     }
 
     return (
-        <div className="min-h-screen bg-white text-black">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-50 text-black">
+            <div className="max-w-7xl mx-auto py-12 px-6 lg:px-12">
                 {/* Header */}
-                <h1 className="text-4xl font-bold mb-6 text-gray-800">User Dashboard</h1>
+                <h1 className="text-4xl playfair-display-sc-regular font-bold mb-6 text-gray-800">User Dashboard</h1>
 
                 {/* Navigation Menu */}
                 <div className="mb-8">
-                    <nav className="flex flex-wrap gap-4 bg-gray-100 p-4 rounded-lg shadow-lg">
+                    <nav className="flex flex-wrap gap-4 bg-white p-4 rounded-lg shadow-lg">
                         {[
                             { name: "registerSession", label: "Register for Session" },
                             { name: "requestPaperSession", label: "Request Paper/Session" },
@@ -68,10 +68,11 @@ export default function Userdash() {
                         ].map((tab) => (
                             <button
                                 key={tab.name}
-                                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${activeTab === tab.name
-                                        ? "bg-gray-200 text-gray-800 shadow-md"
-                                        : "bg-gray-200 text-gray-800"
-                                    }`}
+                                className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+                                    activeTab === tab.name
+                                        ? "bg-yellow-700 text-white shadow-md"
+                                        : "bg-gray-100 text-gray-800 hover:bg-yellow-50"
+                                }`}
                                 onClick={() => setActiveTab(tab.name)}
                             >
                                 {tab.label}
@@ -82,30 +83,30 @@ export default function Userdash() {
 
                 {/* Main Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Sidebar or Info Panel (Left Column) - Optional */}
-                    <div className="lg:col-span-1 bg-gray-200 p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4 text-indigo-900">User Info</h2>
-                        <p className="text-gray-800">Welcome, {session?.user?.email || "User"}!</p>
-                        <p className="text-gray-800 mt-2">Role: {session?.user?.role || "USER"}</p>
+                    {/* Sidebar or Info Panel (Left Column) */}
+                    <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">User Info</h2>
+                        <p className="text-gray-600">Welcome, {session?.user?.email || "User"}!</p>
+                        <p className="text-gray-600 mt-2">Role: {session?.user?.role || "USER"}</p>
                     </div>
 
                     {/* Content Area (Right Column) */}
-                    <div className="lg:col-span-2 bg-gray-100 p-6 rounded-lg shadow-md">
+                    <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
                         {activeTab === "registerSession" && (
                             <div className="space-y-4">
-                                <h2 className="text-2xl font-semibold mb-4 text-indigo-900">Register for Session</h2>
+                                <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">Register for Session</h2>
                                 <RegisterSession
                                     sessions={sessions}
                                     onRegister={handleRegister}
                                 />
-                                {message && <p className="text-sm text-green-400">{message}</p>}
+                                {message && <p className="text-sm text-yellow-700">{message}</p>}
                             </div>
                         )}
                         {activeTab === "requestPaperSession" && (
                             <div className="space-y-4">
                                 <RequestPaperSession />
                                 <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                    <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
                                         {activeTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -119,7 +120,7 @@ export default function Userdash() {
                             <div className="space-y-4">
                                 <WriteReview />
                                 <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                    <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
                                         {activeTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -133,7 +134,7 @@ export default function Userdash() {
                             activeTab !== "requestPaperSession" &&
                             activeTab !== "writeReview" && (
                                 <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4 text-indigo-300">
+                                    <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
                                         {activeTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")

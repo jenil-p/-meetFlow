@@ -39,15 +39,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-blue-900">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-blue-500/50">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">Welcome Back</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-yellow-700/50">
+        <h1 className="text-3xl playfair-display-sc-regular font-bold mb-6 text-gray-800 text-center">Welcome Back</h1>
         {error && <p className="text-red-500 text-center mb-4 animate-pulse">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-700 focus:border-transparent text-black"
               type="email"
               name="email"
               value={formData.email}
@@ -60,7 +60,7 @@ export default function Login() {
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-700 focus:border-transparent text-black"
               type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
@@ -92,7 +92,7 @@ export default function Login() {
               id="rememberMe"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-yellow-700 focus:ring-yellow-700 border-gray-300 rounded"
             />
             <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
               Remember me
@@ -100,12 +100,12 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 transition-colors duration-200"
+            className="w-full bg-yellow-700 text-white rounded-lg py-2 font-semibold hover:bg-yellow-800 transition-colors duration-200"
           >
             Login
           </button>
           <div className="text-center">
-            <a href="#" className="text-sm text-blue-600 hover:underline">
+            <a href="#" className="text-sm text-yellow-700 hover:underline">
               Forgot Password?
             </a>
           </div>
@@ -114,20 +114,20 @@ export default function Login() {
         <div className="flex justify-center gap-4">
           <button
             onClick={() => handleProviderSignIn("google")}
-            className="flex items-center justify-center w-12 h-12 bg-white border-2 border-blue-600 rounded-full hover:bg-blue-50 transition-colors duration-200"
+            className="flex items-center justify-center w-12 h-12 bg-white border-2 border-yellow-700 rounded-full hover:bg-yellow-50 transition-colors duration-200"
           >
-            <FaGoogle className="text-blue-600 text-xl" />
+            <FaGoogle className="text-yellow-700 text-xl" />
           </button>
           <button
             onClick={() => handleProviderSignIn("github")}
-            className="flex items-center justify-center w-12 h-12 bg-white border-2 border-blue-600 rounded-full hover:bg-blue-50 transition-colors duration-200"
+            className="flex items-center justify-center w-12 h-12 bg-white border-2 border-yellow-700 rounded-full hover:bg-yellow-50 transition-colors duration-200"
           >
-            <FaGithub className="text-blue-600 text-xl" />
+            <FaGithub className="text-yellow-700 text-xl" />
           </button>
         </div>
         <p className="mt-6 text-center text-sm text-gray-600">
           Need an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
+          <a href="/signup" className="text-yellow-700 hover:underline">
             Sign Up
           </a>
         </p>

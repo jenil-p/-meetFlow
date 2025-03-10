@@ -35,14 +35,14 @@ const SessionForm = ({
       onSubmit={handleSubmit}
       className="bg-gray-50 p-6 rounded-2xl shadow-lg space-y-4 max-w-4xl mx-auto transition-all duration-300"
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Create Session</h2>
+      <h2 className="text-2xl playfair-display-sc-regular font-bold text-gray-800 mb-4">Create Session</h2>
 
       {/* Conference and Title in a Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Conference:</label>
           <select
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             name="conference"
             value={formData.conference}
             onChange={handleChange}
@@ -63,7 +63,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Title:</label>
           <input
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             type="text"
             name="title"
             value={formData.title}
@@ -78,7 +78,7 @@ const SessionForm = ({
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Description:</label>
         <textarea
-          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 h-20 resize-none shadow-sm transition-all duration-200 hover:border-indigo-300"
+          className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 h-20 resize-none shadow-sm transition-all duration-200 hover:border-yellow-300"
           name="description"
           value={formData.description}
           onChange={handleChange}
@@ -91,7 +91,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Session Type:</label>
           <select
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             name="sessionType"
             value={formData.sessionType}
             onChange={handleChange}
@@ -106,7 +106,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Speaker:</label>
           <input
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             type="text"
             name="speaker"
             value={formData.speaker}
@@ -129,7 +129,7 @@ const SessionForm = ({
             minDate={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
             maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
             initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             placeholderText="Select start time"
             required
           />
@@ -152,7 +152,7 @@ const SessionForm = ({
             }
             maxDate={conferenceRange.endDate ? getValidDate(conferenceRange.endDate) : null}
             initialVisibleMonth={conferenceRange.startDate ? getValidDate(conferenceRange.startDate) : null}
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             placeholderText="Select end time"
             required
           />
@@ -164,7 +164,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Room:</label>
           <select
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             name="room"
             value={formData.room}
             onChange={handleChange}
@@ -181,7 +181,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Resource:</label>
           <select
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             name="resourceId"
             value={formData.resourceId}
             onChange={handleChange}
@@ -201,7 +201,7 @@ const SessionForm = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Resource Quantity:</label>
           <input
-            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 text-gray-900 shadow-sm transition-all duration-200 hover:border-indigo-300"
+            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-700 text-gray-900 shadow-sm transition-all duration-200 hover:border-yellow-300"
             type="number"
             name="resourceQuantity"
             value={formData.resourceQuantity}
@@ -218,7 +218,7 @@ const SessionForm = ({
       </p>
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-lg py-2 font-semibold hover:from-indigo-600 hover:to-blue-600 transition-all duration-300 shadow-md"
+        className="w-full bg-yellow-700 text-white rounded-lg py-2 font-semibold hover:bg-yellow-800 transition-all duration-300 shadow-md"
       >
         {submitLabel}
       </button>

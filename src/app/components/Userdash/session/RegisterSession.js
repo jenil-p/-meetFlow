@@ -57,7 +57,7 @@ const RegisterSession = ({ sessions, onRegister }) => {
             </select>
             <button
                 onClick={handleRegister}
-                className=" bg-blue-600 text-white rounded-md p-1 px-2 text-sm hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className=" bg-yellow-600 text-white rounded-md p-1 px-2 text-sm hover:bg-yellow-700 focus:outline-none focus:ring-1 focus:ring-yellow-600"
             >
                 Register
             </button>

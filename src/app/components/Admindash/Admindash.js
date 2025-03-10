@@ -17,7 +17,6 @@ import Resources from "./RoomResource/Resources";
 import Papers from "./Papers/Papers";
 import Permissions from "./Permissions/Permissions";
 
-
 export default function Admindash() {
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -86,7 +85,7 @@ export default function Admindash() {
 
     // Redirect if not authenticated or not an admin
     if (status === "loading") {
-        return <p className="text-center text-gray-700">Loading...</p>;
+        return <p className="text-center text-gray-600">Loading...</p>;
     }
 
     if (!session || session.user.role !== "ADMIN") {
@@ -107,14 +106,14 @@ export default function Admindash() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-800 p-6">
+        <div className="min-h-screen bg-white text-gray-800 p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <h1 className="text-4xl font-bold text-gray-900 mb-6">Admin Dashboard</h1>
+                <h1 className="text-4xl font-bold text-gray-800 mb-6 playfair-display-sc-regular">Admin Dashboard</h1>
 
                 {/* Navigation Menu */}
                 <div className="mb-8">
-                    <nav className="flex flex-wrap gap-4 bg-white p-4 rounded-lg shadow-md">
+                    <nav className="flex flex-wrap gap-4 bg-gray-100 p-4 rounded-lg shadow-md">
                         {[
                             "sessions",
                             "conferences",
@@ -126,8 +125,8 @@ export default function Admindash() {
                             <button
                                 key={tab}
                                 className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${mainTab === tab
-                                    ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-lg"
-                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    ? "bg-yellow-700 text-white shadow-lg"
+                                    : "bg-white text-gray-600 hover:bg-gray-200"
                                     }`}
                                 onClick={() => handleMainTabChange(tab)}
                             >
@@ -143,28 +142,28 @@ export default function Admindash() {
                 {/* Main Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Calendar (Left Column on Large Screens) */}
-                    <div className="lg:col-span-1 bg-white p-4 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4 text-gray-800">Event Calendar</h2>
+                    <div className="lg:col-span-1 bg-gray-100 p-4 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4 text-gray-800 playfair-display-sc-regular">Event Calendar</h2>
                         <Calendar
                             className="w-full border-none"
                             tileClassName={({ date }) => {
                                 // Placeholder for future event styling
-                                return "hover:bg-gray-100 rounded-md transition-colors duration-200";
+                                return "hover:bg-gray-200 rounded-md transition-colors duration-200";
                             }}
                         />
                     </div>
 
                     {/* Content Area (Right Column on Large Screens) */}
-                    <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                    <div className="lg:col-span-2 bg-gray-100 p-6 rounded-lg shadow-md">
                         {mainTab === "sessions" && (
                             <>
-                                <h2 className="text-2xl font-semibold mb-4 text-gray-800">Manage Sessions</h2>
+                                <h2 className="text-2xl font-semibold mb-4 text-gray-800 playfair-display-sc-regular">Manage Sessions</h2>
                                 <div className="space-y-4">
                                     <div className="flex space-x-4">
                                         <button
                                             className={`px-4 py-2 rounded-md transition-colors ${subTab === "add"
-                                                ? "bg-blue-500 text-white"
-                                                : "bg-blue-300 text-black hover:bg-blue-400"
+                                                ? "bg-yellow-700 text-white"
+                                                : "bg-yellow-600 text-white hover:bg-yellow-700"
                                                 }`}
                                             onClick={() => setSubTab("add")}
                                         >
@@ -172,8 +171,8 @@ export default function Admindash() {
                                         </button>
                                         <button
                                             className={`px-4 py-2 rounded-md transition-colors ${subTab === "update"
-                                                ? "bg-gray-800 text-white"
-                                                : "bg-gray-700 text-white hover:bg-gray-800"
+                                                ? "bg-gray-700 text-white"
+                                                : "bg-gray-600 text-white hover:bg-gray-700"
                                                 }`}
                                             onClick={() => setSubTab("update")}
                                         >
@@ -181,8 +180,8 @@ export default function Admindash() {
                                         </button>
                                         <button
                                             className={`px-4 py-2 rounded-md transition-colors ${subTab === "delete"
-                                                ? "bg-red-800 text-white"
-                                                : "bg-red-700 text-white hover:bg-red-800"
+                                                ? "bg-red-700 text-white"
+                                                : "bg-red-600 text-white hover:bg-red-700"
                                                 }`}
                                             onClick={() => setSubTab("delete")}
                                         >
@@ -227,8 +226,8 @@ export default function Admindash() {
 
                         {mainTab === "conferences" && (
                             <div className="space-y-4">
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                <div className="text-center text-gray-600">
+                                    <h2 className="text-2xl font-semibold mb-4 playfair-display-sc-regular">
                                         {mainTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -246,8 +245,8 @@ export default function Admindash() {
                         {mainTab === "reviewSection" && (
                             <>
                                 <ReviewSection />
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                <div className="text-center text-gray-600">
+                                    <h2 className="text-2xl font-semibold mb-4 playfair-display-sc-regular">
                                         {mainTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -256,13 +255,12 @@ export default function Admindash() {
                                     <p>Feature under development. Check back soon!</p>
                                 </div>
                             </>
-                        )
+                        )}
 
-                        }
                         {mainTab === "roomsResources" && (
                             <div className="space-y-4">
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                <div className="text-center text-gray-600">
+                                    <h2 className="text-2xl font-semibold mb-4 playfair-display-sc-regular">
                                         {mainTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -279,8 +277,8 @@ export default function Admindash() {
                         {mainTab === "papers" && (
                             <>
                                 <Papers />
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                                <div className="text-center text-gray-600">
+                                    <h2 className="text-2xl font-semibold mb-4 playfair-display-sc-regular">
                                         {mainTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")
@@ -290,16 +288,16 @@ export default function Admindash() {
                                 </div>
                             </>
                         )}
-                        {mainTab === "sessionPermissions" && <Permissions />}
+                        {mainTab === "Permissions" && <Permissions />}
 
                         {mainTab !== "sessions" &&
                             mainTab !== "conferences" &&
                             mainTab !== "reviewSection" &&
                             mainTab !== "roomsResources" &&
                             mainTab !== "papers" &&
-                            mainTab !== "sessionPermissions" && (
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl font-semibold mb-4">
+                            mainTab !== "Permissions" && (
+                                <div className="text-center text-gray-600">
+                                    <h2 className="text-2xl font-semibold mb-4 playfair-display-sc-regular">
                                         {mainTab
                                             .split(/(?=[A-Z])/)
                                             .join(" ")

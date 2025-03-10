@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { useSession } from "next-auth/react";
+import { useSession} from "next-auth/react";
 import Userdash from "../components/Userdash/Userdash";
 import Admindash from "../components/Admindash/Admindash";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -11,6 +12,7 @@ const Page = () => {
   if (status === "loading" || !session) {
     return <p className="text-white text-center">Loading...</p>;
   }
+
 
   const role = session.user.role;
 
