@@ -47,7 +47,7 @@ const Navbar = () => {
           <ul className="flex items-center gap-4 sm:text-lg playfair-display-sc-regular font-bold mb-4 text-sm text-gray-700">
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white ho p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToHero}
               >
                 Home
@@ -55,7 +55,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToAbout}
               >
                 About Us
@@ -63,7 +63,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToServices}
               >
                 Our Services
@@ -71,7 +71,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToContact}
               >
                 Contact Us
@@ -79,7 +79,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                className="playfair-display-sc-regular hover:bg-green-600 hover:text-white p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 href={"/login"}
               >
                 Log In
@@ -94,7 +94,7 @@ const Navbar = () => {
           <ul className="flex gap-4 items-center sm:text-lg text-sm text-gray-700">
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToHero}
               >
                 Home
@@ -102,7 +102,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToAbout}
               >
                 About Us
@@ -110,7 +110,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToServices}
               >
                 Our Services
@@ -118,7 +118,7 @@ const Navbar = () => {
             </li>
             <li>
               <button
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 onClick={handleScrollToContact}
               >
                 Contact Us
@@ -126,7 +126,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                className="playfair-display-sc-regular hover:bg-slate-300 p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 href="/dashboard"
               >
                 Dashboard
@@ -134,7 +134,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                className="playfair-display-sc-regular hover:bg-red-500 hover:text-white p-2 rounded-lg transform transition-all duration-300"
+                className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
                 href="/login"
                 onClick={() => signOut()}
               >

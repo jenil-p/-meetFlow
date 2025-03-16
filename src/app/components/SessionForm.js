@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -13,18 +14,37 @@ const SessionForm = ({
   submitLabel,
   conferenceRange = { startDate: null, endDate: null },
 }) => {
-  // Handler for DatePicker changes
+  const [fetchedConferences, setFetchedConferences] = useState(conferences || []);
+
+  useEffect(() => {
+    const fetchConferences = async () => {
+      try {
+        const res = await fetch("/api/conferences?fields=minimal");
+        const data = await res.json();
+        if (res.ok) {
+          setFetchedConferences(data);
+        } else {
+          console.error("Failed to fetch conferences:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching conferences:", error);
+      }
+    };
+
+    if (!conferences || conferences.length === 0) {
+      fetchConferences();
+    }
+  }, [conferences]);
+
   const handleDateChange = (date, field) => {
     handleChange({ target: { name: field, value: date ? date.toISOString() : "" } });
   };
 
-  // Helper to ensure a valid Date object
   const getValidDate = (date) => {
     const parsedDate = new Date(date);
     return isNaN(parsedDate.getTime()) ? null : parsedDate;
   };
 
-  // Helper to format date safely
   const formatDate = (date) => {
     const parsedDate = getValidDate(date);
     return parsedDate ? parsedDate.toLocaleDateString() : "Date not set";
@@ -35,7 +55,9 @@ const SessionForm = ({
       onSubmit={handleSubmit}
       className="bg-gray-50 p-6 rounded-2xl shadow-lg space-y-4 max-w-4xl mx-auto transition-all duration-300"
     >
-      <h2 className="text-2xl playfair-display-sc-regular font-bold text-gray-800 mb-4">Create Session</h2>
+      <h2 className="text-2xl playfair-display-sc-regular font-bold text-gray-800 mb-4">
+        Create Session
+      </h2>
 
       {/* Conference and Title in a Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,10 +70,10 @@ const SessionForm = ({
             onChange={handleChange}
             required
           >
-            {conferences.length === 0 ? (
+            {fetchedConferences.length === 0 ? (
               <option value="">No conferences available</option>
             ) : (
-              conferences.map((conf) => (
+              fetchedConferences.map((conf) => (
                 <option key={conf._id} value={conf._id}>
                   {conf.name} (Starts: {formatDate(conf.startDate)}, Ends: {formatDate(conf.endDate)})
                 </option>

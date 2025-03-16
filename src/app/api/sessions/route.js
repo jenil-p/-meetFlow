@@ -1,4 +1,3 @@
-// /src/app/api/sessions/route.js
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/app/db/connectDB";
@@ -36,11 +35,6 @@ const isAdmin = async () => {
   return { isAdmin: session.user.role === "ADMIN", session };
 };
 
-// Function to check if two time intervals overlap
-const isTimeOverlap = (start1, end1, start2, end2) => {
-  return start1 < end2 && start2 < end1;
-};
-
 // Function to check for overlapping sessions
 const checkOverlappingSessions = async (newSession) => {
   const { conference, startTime, endTime, room } = newSession;
@@ -59,8 +53,7 @@ const checkOverlappingSessions = async (newSession) => {
       },
       {
         room,
-        conference: { $ne: conference },
-        _id: { $ne: newSession._id },
+        conference: { $ne: conference }, _id: { $ne: newSession._id },
         $or: [
           { startTime: { $lt: endTime, $gte: startTime } },
           { endTime: { $gt: startTime, $lte: endTime } },
@@ -140,6 +133,12 @@ export async function POST(req) {
     if (sessionStart < confStart || sessionEnd > confEnd) {
       return NextResponse.json(
         { message: "Session timing is outside the conference schedule" },
+        { status: 400 }
+      );
+    }
+    if (sessionStart > sessionEnd) {
+      return NextResponse.json(
+        { message: "enter valid time interval" },
         { status: 400 }
       );
     }

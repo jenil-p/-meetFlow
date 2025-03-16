@@ -9,7 +9,7 @@ const sessionSchema = new mongoose.Schema({
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room' },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Admin who created the session
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   resources: [
     {
       resource: { type: mongoose.Schema.Types.ObjectId, ref: 'Resource' },
