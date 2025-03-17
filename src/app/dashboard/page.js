@@ -1,29 +1,40 @@
 "use client";
 
 import React from "react";
-import { useSession} from "next-auth/react";
-import Userdash from "../components/Userdash/Userdash";
-import Admindash from "../components/Admindash/Admindash";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Page = () => {
-  const { data: session, status } = useSession();
+    const { data: session, status } = useSession();
+    const router = useRouter();
 
-  if (status === "loading" || !session) {
-    return <p className="text-white text-center">Loading...</p>;
-  }
+    useEffect(() => {
+        if (status === "loading") return; // Wait for session to load
+        if (!session) {
+            router.push("/login");
+            return;
+        }
 
+        // Redirect admins to /admindash, users stay on /dashboard
+        if (session.user.role === "ADMIN") {
+            router.push("/admindash");
+        }
+        if (session.user.role !== "ADMIN"){
+            router.push("/userdash");
+        }
+    }, [session, status, router]);
 
-  const role = session.user.role;
+    if (status === "loading" || !session) {
+        return <p className="text-white text-center">Loading...</p>;
+    }
 
-  return (
-    <div className="min-h-screen bg-white text-black p-6">
-      <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
-      <div className="mx-auto">
-        {role === "ADMIN" ? <Admindash /> : <Userdash />}
-      </div>
-    </div>
-  );
+    // Only render Userdash for non-admins
+    return (
+        <div className="min-h-screen bg-white text-black p-6">
+            dashboard for user
+        </div>
+    );
 };
 
 export default Page;

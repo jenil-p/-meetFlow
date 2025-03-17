@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SessionForm from "../../SessionForm";
+import SessionForm from "./SessionForm";
 
 const AddSession = ({ formData, conferences, rooms, resources, handleChange, setMessage, setSessions, setFormData }) => {
     const [conferenceRange, setConferenceRange] = useState({ startDate: null, endDate: null });

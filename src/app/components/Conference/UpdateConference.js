@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import ConferenceForm from "../../ConferenceForm";
+import { useState, useEffect } from "react";
+import ConferenceForm from "./ConferenceForm";
 
 const UpdateConference = ({
     formData,
@@ -11,32 +11,32 @@ const UpdateConference = ({
     setConferences,
     setFormData,
     onSuccess,
+    preSelectedConferenceId,
 }) => {
-    const [selectedConferenceId, setSelectedConferenceId] = useState("");
+    const [selectedConferenceId, setSelectedConferenceId] = useState(preSelectedConferenceId || "");
 
-    const handleConferenceChange = (e) => {
-        const conferenceId = e.target.value;
-        setSelectedConferenceId(conferenceId);
-        if (conferenceId) {
-            const conference = conferences.find((c) => c._id.toString() === conferenceId);
+    useEffect(() => {
+        setSelectedConferenceId(preSelectedConferenceId || "");
+        if (preSelectedConferenceId) {
+            const conference = conferences.find((c) => c._id.toString() === preSelectedConferenceId);
             if (conference) {
                 setFormData({
                     name: conference.name || "",
                     description: conference.description || "",
-                    startDate: conference.startDate ? new Date(conference.startDate).toISOString() : "",
-                    endDate: conference.endDate ? new Date(conference.endDate).toISOString() : "",
+                    startDate: conference.startDate ? new Date(conference.startDate).toISOString().slice(0, 10) : "",
+                    endDate: conference.endDate ? new Date(conference.endDate).toISOString().slice(0, 10) : "",
                     location: conference.location || "",
                 });
             }
         }
-    };
+    }, [preSelectedConferenceId, conferences, setFormData]);
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
 
         if (!selectedConferenceId) {
-            setMessage("Please select a conference to update");
+            setMessage("No conference selected to update");
             return;
         }
 
@@ -60,13 +60,11 @@ const UpdateConference = ({
                 const data = await res.json();
                 if (res.ok) {
                     setMessage("Conference updated successfully!");
-                    // Refresh conferences list
                     const confRes = await fetch("/api/conferences", { credentials: "include" });
                     const confData = await confRes.json();
                     if (confRes.ok) {
                         setConferences(confData);
                     }
-                    // Clear the form
                     setFormData({
                         name: "",
                         description: "",
@@ -74,8 +72,7 @@ const UpdateConference = ({
                         endDate: "",
                         location: "",
                     });
-                    setSelectedConferenceId("");
-                    onSuccess(); // Reset sub-tab
+                    onSuccess();
                 } else {
                     setMessage(data.message || "Failed to update conference");
                 }
@@ -85,38 +82,15 @@ const UpdateConference = ({
         }
     };
 
-    const formatDate = (date) => {
-        const parsedDate = new Date(date);
-        return isNaN(parsedDate.getTime()) ? "Date not set" : parsedDate.toLocaleDateString();
-    };
-
     return (
         <div className="space-y-4">
             <h2 className="text-2xl mb-4">Update Conference</h2>
-            <div className="flex flex-col">
-                <label className="mb-1">Select Conference to Update:</label>
-                <select
-                    className="bg-gray-200 text-black rounded-md p-2"
-                    value={selectedConferenceId}
-                    onChange={handleConferenceChange}
-                >
-                    <option value="">Select a conference</option>
-                    {conferences.map((conf) => (
-                        <option key={conf._id} value={conf._id}>
-                            {`${conf.name} (Starts: ${formatDate(conf.startDate)}, Ends: ${formatDate(conf.endDate)})`}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {selectedConferenceId && (
-                <ConferenceForm
-                    formData={formData}
-                    handleChange={handleChange}
-                    handleSubmit={handleUpdateSubmit}
-                    submitLabel="Update Conference"
-                />
-            )}
+            <ConferenceForm
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleUpdateSubmit}
+                submitLabel="Update Conference"
+            />
         </div>
     );
 };

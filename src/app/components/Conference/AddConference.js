@@ -1,6 +1,6 @@
 "use client";
 
-import ConferenceForm from "../../ConferenceForm";
+import ConferenceForm from "./ConferenceForm";
 
 const AddConference = ({
     formData,

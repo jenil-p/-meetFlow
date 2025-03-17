@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/app/db/connectDB";
 import Session from "@/app/models/Session";
+import Room from "@/app/models/Room";
+import Resource from "@/app/models/Resource";
 import User from "@/app/models/User";
 import Conference from "@/app/models/Conference";
 import Registration from "@/app/models/Registration";

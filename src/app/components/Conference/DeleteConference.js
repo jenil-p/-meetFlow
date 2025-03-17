@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const DeleteConference = ({ conferences, setMessage, setConferences }) => {
-    const [selectedConferenceId, setSelectedConferenceId] = useState("");
+const DeleteConference = ({ conferences, setMessage, setConferences, onSuccess, preSelectedConferenceId }) => {
+    const [selectedConferenceId, setSelectedConferenceId] = useState(preSelectedConferenceId || "");
 
-    const handleConferenceChange = (e) => {
-        setSelectedConferenceId(e.target.value);
-    };
+    useEffect(() => {
+        setSelectedConferenceId(preSelectedConferenceId || "");
+    }, [preSelectedConferenceId]);
 
     const handleDeleteSubmit = async () => {
         setMessage("");
 
         if (!selectedConferenceId) {
-            setMessage("Please select a conference to delete");
+            setMessage("No conference selected to delete");
             return;
         }
 
@@ -28,12 +28,12 @@ const DeleteConference = ({ conferences, setMessage, setConferences }) => {
                 if (res.ok) {
                     setMessage("Conference deleted successfully!");
                     setSelectedConferenceId("");
-                    // Refresh conferences list
                     const confRes = await fetch("/api/conferences", { credentials: "include" });
                     const confData = await confRes.json();
                     if (confRes.ok) {
                         setConferences(confData);
                     }
+                    onSuccess();
                 } else {
                     setMessage(data.message || "Failed to delete conference");
                 }
@@ -51,27 +51,17 @@ const DeleteConference = ({ conferences, setMessage, setConferences }) => {
     return (
         <div className="space-y-4">
             <h2 className="text-2xl mb-4">Delete Conference</h2>
-            <div className="flex flex-col">
-                <label className="mb-1">Select Conference to Delete:</label>
-                <select
-                    className="bg-gray-200 text-black rounded-md p-2"
-                    value={selectedConferenceId}
-                    onChange={handleConferenceChange}
-                >
-                    <option value="">Select a conference</option>
-                    {conferences.map((conf) => (
-                        <option key={conf._id} value={conf._id}>
-                            {`${conf.name} (Starts: ${formatDate(conf.startDate)}, Ends: ${formatDate(conf.endDate)})`}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
             {selectedConferenceId && (
                 <div>
-                    <p>Selected Conference: {conferences.find((c) => c._id.toString() === selectedConferenceId)?.name}</p>
-                    <p>Starts: {formatDate(conferences.find((c) => c._id.toString() === selectedConferenceId)?.startDate)}</p>
-                    <p>Ends: {formatDate(conferences.find((c) => c._id.toString() === selectedConferenceId)?.endDate)}</p>
+                    <p>
+                        Selected Conference: {conferences.find((c) => c._id.toString() === selectedConferenceId)?.name}
+                    </p>
+                    <p>
+                        Starts: {formatDate(conferences.find((c) => c._id.toString() === selectedConferenceId)?.startDate)}
+                    </p>
+                    <p>
+                        Ends: {formatDate(conferences.find((c) => c._id.toString() === selectedConferenceId)?.endDate)}
+                    </p>
                     <button
                         className="bg-red-500 text-white rounded-md p-2 mt-4"
                         onClick={handleDeleteSubmit}

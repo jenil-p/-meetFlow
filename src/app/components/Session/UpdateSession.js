@@ -1,16 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import SessionForm from "../../SessionForm";
+import { useState, useEffect } from "react";
+import SessionForm from "./SessionForm";
 
-const UpdateSession = ({ formData, sessions, conferences, rooms, resources, handleChange, setMessage, setSessions, setFormData }) => {
-    const [selectedSessionId, setSelectedSessionId] = useState("");
+const UpdateSession = ({
+    formData,
+    sessions,
+    conferences,
+    rooms,
+    resources,
+    handleChange,
+    setMessage,
+    setSessions,
+    setFormData,
+    onSuccess,
+    preSelectedSessionId,
+}) => {
+    const [selectedSessionId, setSelectedSessionId] = useState(preSelectedSessionId || "");
 
-    const handleSessionChange = (e) => {
-        const sessionId = e.target.value;
-        setSelectedSessionId(sessionId);
-        if (sessionId) {
-            const session = sessions.find((s) => s._id.toString() === sessionId);
+    useEffect(() => {
+        setSelectedSessionId(preSelectedSessionId || "");
+        if (preSelectedSessionId) {
+            const session = sessions.find((s) => s._id.toString() === preSelectedSessionId);
             if (session) {
                 setFormData({
                     conference: session.conference?._id || "",
@@ -26,14 +37,14 @@ const UpdateSession = ({ formData, sessions, conferences, rooms, resources, hand
                 });
             }
         }
-    };
+    }, [preSelectedSessionId, sessions, setFormData]);
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
 
         if (!selectedSessionId) {
-            setMessage("Please select a session to update");
+            setMessage("No session selected to update");
             return;
         }
 
@@ -63,12 +74,12 @@ const UpdateSession = ({ formData, sessions, conferences, rooms, resources, hand
                 const data = await res.json();
                 if (res.ok) {
                     setMessage("Session updated successfully!");
-                    // Refresh sessions list
                     const sessRes = await fetch("/api/sessions", { credentials: "include" });
                     const sessData = await sessRes.json();
                     if (sessRes.ok) {
                         setSessions(sessData);
                     }
+                    onSuccess();
                 } else {
                     setMessage(data.message || "Failed to update session");
                 }
@@ -81,33 +92,15 @@ const UpdateSession = ({ formData, sessions, conferences, rooms, resources, hand
     return (
         <div className="space-y-4">
             <h2 className="text-2xl mb-4">Update Session</h2>
-            <div className="flex flex-col">
-                <label className="mb-1">Select Session to Update:</label>
-                <select
-                    className="bg-gray-200 text-black rounded-md p-2"
-                    value={selectedSessionId}
-                    onChange={handleSessionChange}
-                >
-                    <option value="">Select a session</option>
-                    {sessions.map((sess) => (
-                        <option key={sess._id} value={sess._id}>
-                            {`${sess.title} (${sess.conference?.name || "No Conference"}) - ${new Date(sess.startTime).toLocaleString()}`}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {selectedSessionId && (
-                <SessionForm
-                    formData={formData}
-                    conferences={conferences}
-                    rooms={rooms}
-                    resources={resources}
-                    handleChange={handleChange}
-                    handleSubmit={handleUpdateSubmit}
-                    submitLabel="Update Session"
-                />
-            )}
+            <SessionForm
+                formData={formData}
+                conferences={conferences}
+                rooms={rooms}
+                resources={resources}
+                handleChange={handleChange}
+                handleSubmit={handleUpdateSubmit}
+                submitLabel="Update Session"
+            />
         </div>
     );
 };

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
+
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
   const { data: session } = useSession();
@@ -36,6 +37,8 @@ const Navbar = () => {
       contactSection.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  
 
   return (
     <div className="bg-[#a1620796] z-10 sticky top-0 flex justify-between items-center pt-4 px-10 box-border h-16">

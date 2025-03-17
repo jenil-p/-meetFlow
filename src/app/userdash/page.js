@@ -14,6 +14,8 @@ export default function Userdash() {
     const [activeTab, setActiveTab] = useState("registerSession");
     const [sessions, setSessions] = useState([]);
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (status === "loading") return;
@@ -23,16 +25,20 @@ export default function Userdash() {
         }
 
         const fetchSessions = async () => {
+            setLoading(true);
+            setError("");
             try {
                 const res = await fetch("/api/sessions", { credentials: "include" });
                 const data = await res.json();
                 if (res.ok) {
                     setSessions(data);
                 } else {
-                    setMessage("Failed to fetch sessions");
+                    setError("Failed to fetch sessions: " + (data.message || "Unknown error"));
                 }
             } catch (error) {
-                setMessage("Error fetching sessions: " + error.message);
+                setError("Error fetching sessions: " + error.message);
+            } finally {
+                setLoading(false);
             }
         };
         fetchSessions();
@@ -42,6 +48,19 @@ export default function Userdash() {
         const registeredSession = sessions.find((sess) => sess._id === sessionId);
         const sessionTitle = registeredSession ? registeredSession.title : "Unknown Session";
         setMessage(`Successfully registered for "${sessionTitle}"`);
+        // Optionally refetch sessions to reflect updated registration status
+        const fetchSessions = async () => {
+            try {
+                const res = await fetch("/api/sessions", { credentials: "include" });
+                const data = await res.json();
+                if (res.ok) {
+                    setSessions(data);
+                }
+            } catch (error) {
+                setError("Error refreshing sessions: " + error.message);
+            }
+        };
+        fetchSessions();
     };
 
     if (status === "loading") {
@@ -94,12 +113,44 @@ export default function Userdash() {
                     <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
                         {activeTab === "registerSession" && (
                             <div className="space-y-4">
-                                <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">Register for Session</h2>
-                                <RegisterSession
-                                    sessions={sessions}
-                                    onRegister={handleRegister}
-                                />
-                                {message && <p className="text-sm text-yellow-700">{message}</p>}
+                                <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
+                                    Register for Session
+                                </h2>
+                                {message && <p className="text-sm text-green-600 mb-4">{message}</p>}
+                                {loading && <p className="text-sm text-gray-600">Loading sessions...</p>}
+                                {error && <p className="text-sm text-red-500">{error}</p>}
+                                {sessions.length === 0 && !loading && !error ? (
+                                    <p className="text-gray-600">No sessions available.</p>
+                                ) : (
+                                    <div className="grid gap-4">
+                                        {sessions.map((sess) => (
+                                            <div
+                                                key={sess._id}
+                                                className="bg-gray-50 p-4 rounded-2xl shadow-lg flex justify-between items-center"
+                                            >
+                                                <div>
+                                                    <h2 className="text-lg font-semibold text-gray-800">{sess.title}</h2>
+                                                    <p className="text-sm text-gray-600">
+                                                        Conference: {sess.conference?.name || "Not set"}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600">
+                                                        Starts: {new Date(sess.startTime).toLocaleString()}, Ends: {new Date(sess.endTime).toLocaleString()}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600">
+                                                        Room: {sess.room?.roomNumber || "Not set"}
+                                                    </p>
+                                                </div>
+                                                <div className="space-x-2 flex items-center">
+                                                    <RegisterSession
+                                                        sessionId={sess._id}
+                                                        onRegister={handleRegister}
+                                                        userEmail={session.user.email}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                         {activeTab === "requestPaperSession" && (
@@ -107,10 +158,7 @@ export default function Userdash() {
                                 <RequestPaperSession />
                                 <div className="text-center text-gray-500">
                                     <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
-                                        {activeTab
-                                            .split(/(?=[A-Z])/)
-                                            .join(" ")
-                                            .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                        Request Paper/Session
                                     </h2>
                                     <p>Feature under development. Check back soon!</p>
                                 </div>
@@ -121,28 +169,12 @@ export default function Userdash() {
                                 <WriteReview />
                                 <div className="text-center text-gray-500">
                                     <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
-                                        {activeTab
-                                            .split(/(?=[A-Z])/)
-                                            .join(" ")
-                                            .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                        Write Review
                                     </h2>
                                     <p>Feature under development. Check back soon!</p>
                                 </div>
                             </div>
                         )}
-                        {activeTab !== "registerSession" &&
-                            activeTab !== "requestPaperSession" &&
-                            activeTab !== "writeReview" && (
-                                <div className="text-center text-gray-500">
-                                    <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
-                                        {activeTab
-                                            .split(/(?=[A-Z])/)
-                                            .join(" ")
-                                            .replace(/\b\w/g, (c) => c.toUpperCase())}
-                                    </h2>
-                                    <p>Feature under development. Check back soon!</p>
-                                </div>
-                            )}
                     </div>
                 </div>
             </div>
