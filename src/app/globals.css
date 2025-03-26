@@ -160,3 +160,18 @@
 .herosection .image img {
   transition: opacity 0.5s ease;
 }
+
+@keyframes modal-open {
+  0% {
+      transform: scale(0);
+      opacity: 0;
+  }
+  100% {
+      transform: scale(1);
+      opacity: 1;
+  }
+}
+
+.animate-modal-open {
+  animation: modal-open 0.5s ease-out forwards;
+}

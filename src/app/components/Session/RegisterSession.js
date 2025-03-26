@@ -42,7 +42,6 @@ const RegisterSession = ({ sessions, onRegister }) => {
 
     return (
         <div className="my-4 flex gap-4 items-center justify-normal">
-            {/* <h2 className="text-lg font-semibold text-gray-200 mb-2">Register for Session</h2> */}
             <select
                 className="border border-gray-300 text-black rounded-md p-1 text-sm w-full max-w-xs focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={selectedSessionId}

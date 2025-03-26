@@ -3,11 +3,13 @@ import React from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   // Scroll handlers for each section
   const handleScrollToHero = () => {
@@ -38,6 +40,13 @@ const Navbar = () => {
     }
   };
 
+  const handlesignOut = () =>{
+    if(confirm("Sign out ! are you sure ?")){
+      signOut();
+      router.push('/login');
+      return;
+    }
+  }
   
 
   return (
@@ -136,13 +145,13 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link
+              <button
                 className="playfair-display-sc-regular hover:text-white p-2 rounded-lg transform transition-all duration-300"
-                href="/login"
-                onClick={() => signOut()}
+                
+                onClick={() => handlesignOut()}
               >
                 Sign Out
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

@@ -10,13 +10,12 @@ const Page = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (status === "loading") return; // Wait for session to load
+        if (status === "loading") return;
         if (!session) {
             router.push("/login");
             return;
         }
 
-        // Redirect admins to /admindash, users stay on /dashboard
         if (session.user.role === "ADMIN") {
             router.push("/admindash");
         }

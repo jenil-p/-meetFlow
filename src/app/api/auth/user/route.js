@@ -3,11 +3,14 @@ import connectDB from "@/app/db/connectDB";
 import User from "@/app/models/User";
 
 export async function GET(req) {
+
   try {
     await connectDB(); // Ensure database connection
 
+
     const { searchParams } = new URL(req.url);
     const email = searchParams.get("email"); // Get email from query params
+
 
     await connectDB();
     const user = await User.findOne({ email }).lean();

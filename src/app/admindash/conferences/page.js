@@ -121,9 +121,15 @@ export default function ConferencesPage() {
                         });
                         setMessage("");
                     }}
-                    className="inline-block bg-yellow-700 text-white px-4 py-2 rounded-lg hover:bg-yellow-800 transition-all duration-200 shadow-md mb-4"
+                    className={showAddForm ? "inline-block w-full border border-dashed border-black px-4 py-2 rounded-lg text-gray-700 transition-all duration-200 shadow-md mb-4" : "inline-block w-full border border-dashed border-black px-4 py-2 rounded-lg text-gray-700 transition-all duration-200 shadow-md mb-4"}
                 >
-                    {showAddForm ? "Cancel Add Conference" : "Add New Conference"}
+                    {/* {showAddForm ? "Cancel Add Conference" : "Add New Conference"} */}
+                    <div className="flex items-center justify-center gap-2">
+                        {!showAddForm && (
+                            <img className="w-6 h-6" src="/add.svg" alt="" />
+                        )}
+                        <span>{showAddForm ? "Cancel Add COnference" : "Add New Conference"}</span>
+                    </div>
                 </button>
 
                 {message && <p className="text-sm text-green-600 mb-4">{message}</p>}
@@ -198,11 +204,11 @@ export default function ConferencesPage() {
                 {conferences.length === 0 && !loading && !error ? (
                     <p className="text-gray-600">No conferences found.</p>
                 ) : (
-                    <div className="grid gap-4">
+                    <div className="flex flex-col justify-start items-center gap-4 overflow-y-auto max-h-[500px] pb-20">
                         {conferences.map((conference) => (
                             <div
                                 key={conference._id}
-                                className="bg-gray-50 p-4 rounded-2xl shadow-lg flex justify-between items-center"
+                                className="bg-gray-50 p-4 h-32 w-full rounded-2xl shadow-lg flex justify-between items-center"
                             >
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-800">{conference.name}</h2>

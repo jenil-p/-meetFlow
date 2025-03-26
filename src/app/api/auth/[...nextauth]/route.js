@@ -1,6 +1,5 @@
-// /src/app/api/auth/[...nextauth]/route.js
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "@/app/db/connectDB";
@@ -9,9 +8,9 @@ import bcrypt from "bcryptjs";
 
 export const authOptions = NextAuth({
   providers: [
-    GithubProvider({
+    GitHubProvider({
       clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
+      clientSecret: process.env.GITHUB_SECRET
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -39,33 +38,38 @@ export const authOptions = NextAuth({
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       await connectDB();
-      const currentUser = await User.findOne({ email: user.email });
+      let currentUser = await User.findOne({ email: user.email });
       if (!currentUser) {
-        const newUser = new User({
-          name: user.name || profile?.name || user.email.split("@")[0],
+        currentUser = new User({
+          username: user.name || profile?.name || user.email.split("@")[0],
           email: user.email,
           password: credentials?.password ? await bcrypt.hash(credentials.password, 10) : undefined,
           role: "USER",
-          username: user.email.split("@")[0],
           createdAt: new Date(),
+          googleId: account?.provider === "google" ? account.providerAccountId : undefined,
+          githubId: account?.provider === "github" ? account.providerAccountId : undefined,
         });
-        await newUser.save();
+        await currentUser.save();
+      } else {
+        // Update googleId or githubId if not set
+        if (account?.provider === "google" && !currentUser.googleId) {
+          currentUser.googleId = account.providerAccountId;
+          await currentUser.save();
+        }
+         else if (account?.provider === "github" && !currentUser.githubId) {
+          currentUser.githubId = account.providerAccountId;
+          await currentUser.save();
+        }
       }
       return true;
     },
     async session({ session, token }) {
-      // Minimize database calls by relying on token if possible
-      if (token?.sub) {
-        session.user.id = token.sub; // Use token sub as a unique identifier
-      }
-      // Fetch role only if not already in token (optional optimization)
-      if (!session.user.role) {
-        await connectDB();
-        const dbUser = await User.findOne({ email: session.user.email }, "role username").lean();
-        if (dbUser) {
-          session.user.role = dbUser.role;
-          session.user.name = dbUser.username;
-        }
+      await connectDB();
+      const dbUser = await User.findOne({ email: session.user.email }, "role username _id").lean();
+      if (dbUser) {
+        session.user.id = dbUser._id.toString(); // Set session.user.id to MongoDB _id
+        session.user.role = dbUser.role;
+        session.user.name = dbUser.username;
       }
       return session;
     },

@@ -7,9 +7,9 @@ const userSchema = new mongoose.Schema({
   googleId: { type: String },
   githubId: { type: String },
   role: { type: String, enum: ['USER', 'ADMIN'], default: 'USER', required: true },
-  affiliation: { type: String }, // to be added...
-  contactDetails: { type: String },// to be added...
-  areasOfInterest: { type: String },// to be added...
+  affiliation: { type: String },
+  contactDetails: { type: String },
+  areasOfInterest: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

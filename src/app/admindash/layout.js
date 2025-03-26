@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -9,15 +9,14 @@ import Link from "next/link";
 
 export default function AdminLayout({ children }) {
     const { data: session, status } = useSession();
-    const router = useRouter();
+    const pathname = usePathname();
 
-    // Redirect if not authenticated or not an admin
     useEffect(() => {
         if (status === "loading") return;
         if (!session || session.user.role !== "ADMIN") {
-            router.push("/login");
+            window.location.href = "/login";
         }
-    }, [session, status, router]);
+    }, [session, status]);
 
     if (status === "loading") {
         return <p className="text-center text-gray-600">Loading...</p>;
@@ -35,12 +34,6 @@ export default function AdminLayout({ children }) {
                     <h1 className="text-4xl font-bold text-gray-800 playfair-display-sc-regular">
                         Admin Dashboard
                     </h1>
-                    <button
-                        onClick={handleLogout}
-                        className="text-red-600 hover:underline"
-                    >
-                        Logout
-                    </button>
                 </div>
 
                 {/* Navigation Menu */}
@@ -58,7 +51,7 @@ export default function AdminLayout({ children }) {
                                 key={tab.name}
                                 href={`/admindash/${tab.name}`}
                                 className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
-                                    router.pathname === `/admindash/${tab.name}`
+                                    pathname === `/admindash/${tab.name}`
                                         ? "bg-yellow-700 text-white shadow-lg"
                                         : "bg-white text-gray-600 hover:bg-gray-200"
                                 }`}
@@ -70,9 +63,9 @@ export default function AdminLayout({ children }) {
                 </div>
 
                 {/* Main Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Calendar (Left Column on Large Screens) */}
-                    <div className="lg:col-span-1 bg-gray-100 p-4 rounded-lg shadow-md">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
+                    {/* Calendar */}
+                    <div className="lg:col-span-1 sticky top-6 bg-gray-100 p-4 rounded-lg shadow-md max-h-[400px]">
                         <h2 className="text-xl font-semibold mb-4 text-gray-800 playfair-display-sc-regular">
                             Event Calendar
                         </h2>
@@ -84,7 +77,7 @@ export default function AdminLayout({ children }) {
                         />
                     </div>
 
-                    {/* Content Area (Right Column on Large Screens) */}
+                    {/* Content  */}
                     <div className="lg:col-span-2 bg-gray-100 p-6 rounded-lg shadow-md">
                         {children}
                     </div>
