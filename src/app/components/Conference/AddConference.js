@@ -1,18 +1,17 @@
 "use client";
 
+import { toast } from "react-toastify";
 import ConferenceForm from "./ConferenceForm";
 
 const AddConference = ({
     formData,
     handleChange,
-    setMessage,
     setConferences,
     setFormData,
     onSuccess,
 }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
         try {
             const res = await fetch("/api/conferences", {
                 method: "POST",
@@ -28,7 +27,7 @@ const AddConference = ({
             });
             const data = await res.json();
             if (res.ok) {
-                setMessage("Conference created successfully!");
+                toast.success("Conference created successfully!");
                 setFormData({
                     name: "",
                     description: "",
@@ -44,10 +43,10 @@ const AddConference = ({
                 }
                 onSuccess(); // Reset sub-tab
             } else {
-                setMessage(data.message || "Failed to create conference");
+                toast.error(data.message || "Failed to create conference");
             }
         } catch (error) {
-            setMessage("Error creating conference: " + error.message);
+            toast.error("Error creating conference: " + error.message);
         }
     };
 

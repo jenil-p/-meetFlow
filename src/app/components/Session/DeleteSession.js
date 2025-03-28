@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
-const DeleteSession = ({ sessions, setMessage, setSessions, onSuccess, preSelectedSessionId }) => {
+const DeleteSession = ({ sessions, setSessions, onSuccess, preSelectedSessionId }) => {
     const [selectedSessionId, setSelectedSessionId] = useState(preSelectedSessionId || "");
 
     useEffect(() => {
@@ -10,10 +11,8 @@ const DeleteSession = ({ sessions, setMessage, setSessions, onSuccess, preSelect
     }, [preSelectedSessionId]);
 
     const handleDeleteSubmit = async () => {
-        setMessage("");
-
         if (!selectedSessionId) {
-            setMessage("No session selected to delete");
+            toast.error("No session selected to delete");
             return;
         }
 
@@ -26,7 +25,7 @@ const DeleteSession = ({ sessions, setMessage, setSessions, onSuccess, preSelect
 
                 const data = await res.json();
                 if (res.ok) {
-                    setMessage("Session deleted successfully!");
+                    toast.success("Session deleted successfully!");
                     setSelectedSessionId("");
                     const sessRes = await fetch("/api/sessions", { credentials: "include" });
                     const sessData = await sessRes.json();
@@ -35,10 +34,10 @@ const DeleteSession = ({ sessions, setMessage, setSessions, onSuccess, preSelect
                     }
                     onSuccess();
                 } else {
-                    setMessage(data.message || "Failed to delete session");
+                    toast.error(data.message || "Failed to delete session");
                 }
             } catch (error) {
-                setMessage("Error: " + error.message);
+                toast.error("Error: " + error.message);
             }
         }
     };

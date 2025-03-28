@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const RegisterSession = ({ sessions, onRegister }) => {
     const { data: session } = useSession();
     const [selectedSessionId, setSelectedSessionId] = useState("");
-    const [message, setMessage] = useState("");
 
     const handleRegister = async () => {
         if (!selectedSessionId || !session?.user?.email) {
-            setMessage("Please select a session and ensure you are logged in.");
+            toast.error("Please select a session and ensure you are logged in.");
             return;
         }
 
@@ -30,13 +29,13 @@ const RegisterSession = ({ sessions, onRegister }) => {
             if (res.ok) {
                 const registeredSession = sessions.find((sess) => sess._id === selectedSessionId);
                 const sessionTitle = registeredSession ? registeredSession.title : "Unknown Session";
-                setMessage(`Successfully registered for "${sessionTitle}"!`);
+                toast.success(`Successfully registered for "${sessionTitle}"!`);
                 onRegister(selectedSessionId); // Callback to update parent state
             } else {
-                setMessage(data.message || "Registration failed");
+                toast.error(data.message || "Registration failed");
             }
         } catch (error) {
-            setMessage("Error: " + error.message);
+            toast.error("Error: " + error.message);
         }
     };
 
@@ -60,7 +59,6 @@ const RegisterSession = ({ sessions, onRegister }) => {
             >
                 Register
             </button>
-            {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}
         </div>
     );
 };

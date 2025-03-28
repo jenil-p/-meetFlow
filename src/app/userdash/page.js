@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import UserInfo from "./UserInfo";
 import NavMenu from "./NavMenu";
 import SessionList from "./SessionList";
@@ -17,14 +18,11 @@ export default function Userdash() {
   const [activeTab, setActiveTab] = useState("registerSession");
   const [sessions, setSessions] = useState([]);
   const [registeredSessions, setRegisteredSessions] = useState([]);
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedSession, setSelectedSession] = useState(null); // For review modal
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [reviewMessage, setReviewMessage] = useState("");
 
   useEffect(() => {
     if (status === "loading") return;
@@ -35,17 +33,16 @@ export default function Userdash() {
 
     const fetchSessions = async () => {
       setLoading(true);
-      setError("");
       try {
         const res = await fetch("/api/sessions", { credentials: "include" });
         const data = await res.json();
         if (res.ok) {
           setSessions(data);
         } else {
-          setError("Failed to fetch sessions: " + (data.message || "Unknown error"));
+          toast.error("Failed to fetch sessions: " + (data.message || "Unknown error"));
         }
       } catch (error) {
-        setError("Error fetching sessions: " + error.message);
+        toast.error("Error fetching sessions: " + error.message);
       } finally {
         setLoading(false);
       }
@@ -62,7 +59,6 @@ export default function Userdash() {
 
     const fetchRegisteredSessions = async () => {
       setLoading(true);
-      setError("");
       try {
         const res = await fetch(`/api/registrations?id=${session.user.id}`, {
           credentials: "include",
@@ -71,12 +67,12 @@ export default function Userdash() {
         if (res.ok) {
           setRegisteredSessions(data);
         } else {
-          setError(
+          toast.error(
             "Failed to fetch registered sessions: " + (data.message || "Unknown error")
           );
         }
       } catch (error) {
-        setError("Error fetching registered sessions: " + error.message);
+        toast.error("Error fetching registered sessions: " + error.message);
       } finally {
         setLoading(false);
       }
@@ -89,7 +85,7 @@ export default function Userdash() {
   const handleRegister = (sessionId) => {
     const registeredSession = sessions.find((sess) => sess._id === sessionId);
     const sessionTitle = registeredSession ? registeredSession.title : "Unknown Session";
-    setMessage(`Successfully registered for "${sessionTitle}"`);
+    toast.success(`Successfully registered for "${sessionTitle}"`);
     const fetchSessions = async () => {
       try {
         const res = await fetch("/api/sessions", { credentials: "include" });
@@ -98,20 +94,55 @@ export default function Userdash() {
           setSessions(data);
         }
       } catch (error) {
-        setError("Error refreshing sessions: " + error.message);
+        toast.error("Error refreshing sessions: " + error.message);
       }
     };
     fetchSessions();
   };
 
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    setReviewMessage("");
-
-    if (!rating || rating < 1 || rating > 5) {
-      setReviewMessage("Please select a rating between 1 and 5.");
+  const handleCancel = async (registrationId, sessionTitle) => {
+    if (!confirm(`Are you sure you want to cancel your registration for "${sessionTitle}"?`)) {
       return;
     }
+
+    try {
+      const res = await fetch("/api/registrations", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: registrationId }),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`Successfully canceled registration for "${sessionTitle}"`);
+        // Refresh the registered sessions list
+        const fetchRegisteredSessions = async () => {
+          try {
+            const res = await fetch(`/api/registrations?id=${session.user.id}`, {
+              credentials: "include",
+            });
+            const data = await res.json();
+            if (res.ok) {
+              setRegisteredSessions(data);
+            }
+          } catch (error) {
+            toast.error("Error refreshing registered sessions: " + error.message);
+          }
+        };
+        fetchRegisteredSessions();
+      } else {
+        toast.error(data.message || "Failed to cancel registration");
+      }
+    } catch (error) {
+      toast.error("Error canceling registration: " + error.message);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
 
     try {
       const res = await fetch("/api/review", {
@@ -130,18 +161,17 @@ export default function Userdash() {
 
       const data = await res.json();
       if (res.ok) {
-        setReviewMessage("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         setTimeout(() => {
           setSelectedSession(null);
           setRating(0);
           setComment("");
-          setReviewMessage("");
         }, 1500);
       } else {
-        setReviewMessage(data.message || "Failed to submit review");
+        toast.error(data.message || "Failed to submit review");
       }
     } catch (error) {
-      setReviewMessage("Error: " + error.message);
+      toast.error("Error: " + error.message);
     }
   };
 
@@ -179,8 +209,6 @@ export default function Userdash() {
               <SessionList
                 sessions={sessions}
                 loading={loading}
-                error={error}
-                message={message}
                 handleRegister={handleRegister}
                 userEmail={session.user.email}
               />
@@ -200,8 +228,8 @@ export default function Userdash() {
               <RegisteredSessionsList
                 registeredSessions={registeredSessions}
                 loading={loading}
-                error={error}
                 setSelectedSession={setSelectedSession}
+                handleCancel={handleCancel}
               />
             )}
           </div>
@@ -219,8 +247,6 @@ export default function Userdash() {
           setHoverRating={setHoverRating}
           comment={comment}
           setComment={setComment}
-          reviewMessage={reviewMessage}
-          setReviewMessage={setReviewMessage}
           handleReviewSubmit={handleReviewSubmit}
         />
       )}

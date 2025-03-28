@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
-const DeleteConference = ({ conferences, setMessage, setConferences, onSuccess, preSelectedConferenceId }) => {
+const DeleteConference = ({ conferences, setConferences, onSuccess, preSelectedConferenceId }) => {
     const [selectedConferenceId, setSelectedConferenceId] = useState(preSelectedConferenceId || "");
 
     useEffect(() => {
@@ -10,10 +11,8 @@ const DeleteConference = ({ conferences, setMessage, setConferences, onSuccess, 
     }, [preSelectedConferenceId]);
 
     const handleDeleteSubmit = async () => {
-        setMessage("");
-
         if (!selectedConferenceId) {
-            setMessage("No conference selected to delete");
+            toast.error("No conference selected to delete");
             return;
         }
 
@@ -26,7 +25,7 @@ const DeleteConference = ({ conferences, setMessage, setConferences, onSuccess, 
 
                 const data = await res.json();
                 if (res.ok) {
-                    setMessage("Conference deleted successfully!");
+                    toast.success("Conference deleted successfully!");
                     setSelectedConferenceId("");
                     const confRes = await fetch("/api/conferences", { credentials: "include" });
                     const confData = await confRes.json();
@@ -35,10 +34,10 @@ const DeleteConference = ({ conferences, setMessage, setConferences, onSuccess, 
                     }
                     onSuccess();
                 } else {
-                    setMessage(data.message || "Failed to delete conference");
+                    toast.error(data.message || "Failed to delete conference");
                 }
             } catch (error) {
-                setMessage("Error: " + error.message);
+                toast.error("Error: " + error.message);
             }
         }
     };

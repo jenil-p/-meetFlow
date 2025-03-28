@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 
 export default function Resources() {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editResource, setEditResource] = useState(null);
   const [formData, setFormData] = useState({ name: "", description: "", totalQuantity: "" });
-  const [message, setMessage] = useState("");
 
   // Fetch resources on mount
   useEffect(() => {
@@ -20,17 +19,16 @@ export default function Resources() {
 
   const fetchResources = async () => {
     setLoading(true);
-    setError("");
     try {
       const res = await fetch("/api/resources", { credentials: "include" });
       const data = await res.json();
       if (res.ok) {
         setResources(data);
       } else {
-        setError(data.message || "Failed to fetch resources");
+        toast.error(data.message || "Failed to fetch resources");
       }
     } catch (error) {
-      setError("Error fetching resources: " + error.message);
+      toast.error("Error fetching resources: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -43,8 +41,6 @@ export default function Resources() {
 
   const handleAddOrUpdateResource = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
 
     const method = editResource ? "PUT" : "POST";
     const body = editResource
@@ -60,16 +56,16 @@ export default function Resources() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.message);
+        toast.success(data.message);
         fetchResources();
         setShowModal(false);
         setFormData({ name: "", description: "", totalQuantity: "" });
         setEditResource(null);
       } else {
-        setError(data.message || "Failed to save resource");
+        toast.error(data.message || "Failed to save resource");
       }
     } catch (error) {
-      setError("Error saving resource: " + error.message);
+      toast.error("Error saving resource: " + error.message);
     }
   };
 
@@ -85,8 +81,6 @@ export default function Resources() {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this resource?")) return;
-    setMessage("");
-    setError("");
     try {
       const res = await fetch("/api/resources", {
         method: "DELETE",
@@ -96,13 +90,13 @@ export default function Resources() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.message);
+        toast.success(data.message);
         fetchResources();
       } else {
-        setError(data.message || "Failed to delete resource");
+        toast.error(data.message || "Failed to delete resource");
       }
     } catch (error) {
-      setError("Error deleting resource: " + error.message);
+      toast.error("Error deleting resource: " + error.message);
     }
   };
 
@@ -122,8 +116,6 @@ export default function Resources() {
         </button>
       </div>
 
-      {message && <p className="text-green-600 mb-4">{message}</p>}
-      {error && <p className="text-red-500 mb-4">{error}</p>}
       {loading && <p className="text-gray-600">Loading resources...</p>}
 
       <div className="grid gap-4">

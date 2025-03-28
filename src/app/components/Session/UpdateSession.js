@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import SessionForm from "./SessionForm";
 
 const UpdateSession = ({
@@ -10,7 +11,6 @@ const UpdateSession = ({
     rooms,
     resources,
     handleChange,
-    setMessage,
     setSessions,
     setFormData,
     onSuccess,
@@ -41,10 +41,9 @@ const UpdateSession = ({
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
 
         if (!selectedSessionId) {
-            setMessage("No session selected to update");
+            toast.error("No session selected to update");
             return;
         }
 
@@ -73,7 +72,7 @@ const UpdateSession = ({
 
                 const data = await res.json();
                 if (res.ok) {
-                    setMessage("Session updated successfully!");
+                    toast.success("Session updated successfully!");
                     const sessRes = await fetch("/api/sessions", { credentials: "include" });
                     const sessData = await sessRes.json();
                     if (sessRes.ok) {
@@ -81,10 +80,10 @@ const UpdateSession = ({
                     }
                     onSuccess();
                 } else {
-                    setMessage(data.message || "Failed to update session");
+                    toast.error(data.message || "Failed to update session");
                 }
             } catch (error) {
-                setMessage("Error: " + error.message);
+                toast.error("Error: " + error.message);
             }
         }
     };

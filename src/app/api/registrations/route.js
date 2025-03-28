@@ -7,6 +7,26 @@ import User from "@/app/models/User";
 
 connectDB();
 
+export async function DELETE(request) {
+      try {
+    
+        const { id } = await request.json();
+        if (!id) {
+          return NextResponse.json({ message: "registration ID is required" }, { status: 400 });
+        }
+    
+        const registration = await Registration.findByIdAndDelete(id);
+        if (!registration) {
+          return NextResponse.json({ message: "registration not found" }, { status: 404 });
+        }
+    
+        return NextResponse.json({ message: "registration deleted successfully" }, { status: 200 });
+      } catch (error) {
+        console.error("Error deleting registration:", error);
+        return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
+      }
+}
+
 export async function POST(req) {
     try {
         const { userEmail, sessionId } = await req.json();

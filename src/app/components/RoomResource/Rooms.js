@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 
 export default function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editRoom, setEditRoom] = useState(null);
   const [formData, setFormData] = useState({ roomNumber: "", capacity: "", location: "" });
-  const [message, setMessage] = useState("");
 
   // Fetch rooms on mount
   useEffect(() => {
@@ -20,17 +19,16 @@ export default function Rooms() {
 
   const fetchRooms = async () => {
     setLoading(true);
-    setError("");
     try {
       const res = await fetch("/api/rooms", { credentials: "include" });
       const data = await res.json();
       if (res.ok) {
         setRooms(data);
       } else {
-        setError(data.message || "Failed to fetch rooms");
+        toast.error(data.message || "Failed to fetch rooms");
       }
     } catch (error) {
-      setError("Error fetching rooms: " + error.message);
+      toast.error("Error fetching rooms: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -43,8 +41,6 @@ export default function Rooms() {
 
   const handleAddOrUpdateRoom = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
 
     const method = editRoom ? "PUT" : "POST";
     const body = editRoom
@@ -60,16 +56,16 @@ export default function Rooms() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.message);
+        toast.success(data.message);
         fetchRooms();
         setShowModal(false);
         setFormData({ roomNumber: "", capacity: "", location: "" });
         setEditRoom(null);
       } else {
-        setError(data.message || "Failed to save room");
+        toast.error(data.message || "Failed to save room");
       }
     } catch (error) {
-      setError("Error saving room: " + error.message);
+      toast.error("Error saving room: " + error.message);
     }
   };
 
@@ -85,8 +81,6 @@ export default function Rooms() {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this room?")) return;
-    setMessage("");
-    setError("");
     try {
       const res = await fetch("/api/rooms", {
         method: "DELETE",
@@ -96,13 +90,13 @@ export default function Rooms() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.message);
+        toast.success(data.message);
         fetchRooms();
       } else {
-        setError(data.message || "Failed to delete room");
+        toast.error(data.message || "Failed to delete room");
       }
     } catch (error) {
-      setError("Error deleting room: " + error.message);
+      toast.error("Error deleting room: " + error.message);
     }
   };
 
@@ -122,8 +116,6 @@ export default function Rooms() {
         </button>
       </div>
 
-      {message && <p className="text-green-600 mb-4">{message}</p>}
-      {error && <p className="text-red-500 mb-4">{error}</p>}
       {loading && <p className="text-gray-600">Loading rooms...</p>}
 
       <div className="grid gap-4">

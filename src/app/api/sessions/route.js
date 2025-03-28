@@ -55,7 +55,8 @@ const checkOverlappingSessions = async (newSession) => {
       },
       {
         room,
-        conference: { $ne: conference }, _id: { $ne: newSession._id },
+        conference: { $ne: conference },
+        _id: { $ne: newSession._id },
         $or: [
           { startTime: { $lt: endTime, $gte: startTime } },
           { endTime: { $gt: startTime, $lte: endTime } },
@@ -68,13 +69,63 @@ const checkOverlappingSessions = async (newSession) => {
   return overlappingSessions.length > 0;
 };
 
+// New helper function to check resource availability
+const checkResourceAvailability = async (resources, startTime, endTime, excludeSessionId = null) => {
+  if (!resources || resources.length === 0) return true; // No resources to check
+
+  for (const { resource: resourceId, quantity } of resources) {
+    if (!resourceId || !quantity) continue;
+
+    // Fetch the resource to get its total quantity
+    const resource = await Resource.findById(resourceId);
+    if (!resource) {
+      throw new Error(`Resource with ID ${resourceId} not found`);
+    }
+
+    const totalQuantity = resource.totalQuantity;
+
+    // Find all sessions that overlap with the given time period and use this resource
+    const overlappingSessions = await Session.find({
+      "resources.resource": resourceId,
+      _id: { $ne: excludeSessionId }, // Exclude the session being updated (if any)
+      $or: [
+        { startTime: { $lt: endTime, $gte: startTime } },
+        { endTime: { $gt: startTime, $lte: endTime } },
+        { startTime: { $lte: startTime }, endTime: { $gte: endTime } },
+      ],
+    }).lean();
+
+    // Calculate the total quantity already allocated during this time period
+    let allocatedQuantity = 0;
+    for (const session of overlappingSessions) {
+      const resourceEntry = session.resources.find(
+        (r) => r.resource.toString() === resourceId.toString()
+      );
+      if (resourceEntry) {
+        allocatedQuantity += resourceEntry.quantity;
+      }
+    }
+
+    // Check if the requested quantity exceeds the available quantity
+    const availableQuantity = totalQuantity - allocatedQuantity;
+    if (quantity > availableQuantity) {
+      return {
+        isAvailable: false,
+        message: `Requested quantity (${quantity}) for resource "${resource.name}" exceeds available quantity (${availableQuantity}). Total quantity: ${totalQuantity}, allocated: ${allocatedQuantity}.`,
+      };
+    }
+  }
+
+  return { isAvailable: true };
+};
+
 // GET: Fetch all sessions (accessible to both users and admins)
 export async function GET() {
   try {
     await ensureDbConnection();
     console.log("Fetching sessions...");
     const sessions = await Session.find()
-      .populate("conference", "name")
+      .populate("conference", "name location") // Ensure location is populated
       .populate("room", "roomNumber")
       .populate("createdBy", "name")
       .populate("resources.resource", "name");
@@ -140,7 +191,7 @@ export async function POST(req) {
     }
     if (sessionStart > sessionEnd) {
       return NextResponse.json(
-        { message: "enter valid time interval" },
+        { message: "Enter valid time interval" },
         { status: 400 }
       );
     }
@@ -186,6 +237,15 @@ export async function POST(req) {
     if (hasOverlap) {
       return new Response(
         JSON.stringify({ message: "Session overlaps with an existing session in the same room" }),
+        { status: 400 }
+      );
+    }
+
+    // Check resource availability
+    const resourceCheck = await checkResourceAvailability(resources, sessionStart, sessionEnd);
+    if (!resourceCheck.isAvailable) {
+      return new Response(
+        JSON.stringify({ message: resourceCheck.message }),
         { status: 400 }
       );
     }
@@ -284,6 +344,34 @@ export async function PUT(req) {
         JSON.stringify({ message: "Invalid date format" }),
         { status: 400 }
       );
+    }
+
+    // Check resource availability if resources or timing is being updated
+    if (resources || startTime || endTime) {
+      const existingSession = await Session.findById(id);
+      if (!existingSession) {
+        return new Response(
+          JSON.stringify({ message: "Session not found" }),
+          { status: 404 }
+        );
+      }
+
+      const updatedStartTime = startTime ? new Date(startTime) : existingSession.startTime;
+      const updatedEndTime = endTime ? new Date(endTime) : existingSession.endTime;
+      const updatedResources = resources || existingSession.resources;
+
+      const resourceCheck = await checkResourceAvailability(
+        updatedResources,
+        updatedStartTime,
+        updatedEndTime,
+        id // Exclude this session from the overlap check
+      );
+      if (!resourceCheck.isAvailable) {
+        return new Response(
+          JSON.stringify({ message: resourceCheck.message }),
+          { status: 400 }
+        );
+      }
     }
 
     const updatedSession = await Session.findByIdAndUpdate(

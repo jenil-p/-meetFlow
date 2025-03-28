@@ -4,8 +4,6 @@ import RegisterSession from "./session/RegisterSession";
 export default function SessionList({
   sessions,
   loading,
-  error,
-  message,
   handleRegister,
   userEmail,
 }) {
@@ -14,10 +12,8 @@ export default function SessionList({
       <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
         Register for Session
       </h2>
-      {message && <p className="text-sm text-green-600 mb-4">{message}</p>}
       {loading && <p className="text-sm text-gray-600">Loading sessions...</p>}
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {sessions.length === 0 && !loading && !error ? (
+      {sessions.length === 0 && !loading ? (
         <p className="text-gray-600">No sessions available.</p>
       ) : (
         <div className="flex flex-col justify-start items-center gap-4 overflow-y-auto max-h-[500px] pb-20">

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import ConferenceForm from "./ConferenceForm";
 
 const UpdateConference = ({
     formData,
     conferences,
     handleChange,
-    setMessage,
     setConferences,
     setFormData,
     onSuccess,
@@ -33,10 +33,9 @@ const UpdateConference = ({
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
 
         if (!selectedConferenceId) {
-            setMessage("No conference selected to update");
+            toast.error("No conference selected to update");
             return;
         }
 
@@ -59,7 +58,7 @@ const UpdateConference = ({
 
                 const data = await res.json();
                 if (res.ok) {
-                    setMessage("Conference updated successfully!");
+                    toast.success("Conference updated successfully!");
                     const confRes = await fetch("/api/conferences", { credentials: "include" });
                     const confData = await confRes.json();
                     if (confRes.ok) {
@@ -74,10 +73,10 @@ const UpdateConference = ({
                     });
                     onSuccess();
                 } else {
-                    setMessage(data.message || "Failed to update conference");
+                    toast.error(data.message || "Failed to update conference");
                 }
             } catch (error) {
-                setMessage("Error: " + error.message);
+                toast.error("Error: " + error.message);
             }
         }
     };

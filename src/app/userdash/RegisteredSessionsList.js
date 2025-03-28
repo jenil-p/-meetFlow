@@ -3,8 +3,8 @@ import React from "react";
 export default function RegisteredSessionsList({
   registeredSessions,
   loading,
-  error,
   setSelectedSession,
+  handleCancel,
 }) {
   return (
     <div className="space-y-4">
@@ -12,8 +12,7 @@ export default function RegisteredSessionsList({
         Registered Sessions
       </h2>
       {loading && <p className="text-sm text-gray-600">Loading sessions...</p>}
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {registeredSessions.length === 0 && !loading && !error ? (
+      {registeredSessions.length === 0 && !loading ? (
         <p className="text-gray-600">You have not registered for any sessions.</p>
       ) : (
         <div className="flex flex-col justify-start items-center gap-4 overflow-y-auto max-h-[500px] pb-20">
@@ -32,7 +31,7 @@ export default function RegisteredSessionsList({
                   </h2>
                   <p className="text-sm text-gray-600">Status: {reg.status || "Not set"}</p>
                   <p className="text-sm text-gray-600">
-                    Registered At: {new Date(reg.registeredAt).toLocaleString()}
+                    Registered At: {new Date(reg.registrationDate).toLocaleString()}
                   </p>
                   {reg.session?.startTime && reg.session?.endTime && (
                     <p className="text-sm text-gray-600">
@@ -41,14 +40,23 @@ export default function RegisteredSessionsList({
                     </p>
                   )}
                 </div>
-                {sessionEnded && (
-                  <button
-                    onClick={() => setSelectedSession(reg.session)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Rate Us
-                  </button>
-                )}
+                <div className="space-x-2">
+                  {sessionEnded ? (
+                    <button
+                      onClick={() => setSelectedSession(reg.session)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Rate Us
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleCancel(reg._id, reg.session?.title || "Unknown Session")}
+                      className="text-red-600 hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}

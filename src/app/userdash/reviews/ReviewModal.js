@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 
 export default function ReviewModal({
   selectedSession,
@@ -9,10 +10,19 @@ export default function ReviewModal({
   setHoverRating,
   comment,
   setComment,
-  reviewMessage,
-  setReviewMessage,
   handleReviewSubmit,
 }) {
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!rating || rating < 1 || rating > 5) {
+      toast.error("Please select a rating between 1 and 5.");
+      return;
+    }
+
+    await handleReviewSubmit(e);
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Overlay */}
@@ -26,7 +36,7 @@ export default function ReviewModal({
         <h2 className="text-2xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
           Rate "{selectedSession.title}"
         </h2>
-        <form onSubmit={handleReviewSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 mb-2">Rating (1-5)</label>
             <div className="flex space-x-1">
@@ -77,15 +87,6 @@ export default function ReviewModal({
               Cancel
             </button>
           </div>
-          {reviewMessage && (
-            <p
-              className={`text-sm ${
-                reviewMessage.includes("successfully") ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {reviewMessage}
-            </p>
-          )}
         </form>
       </div>
     </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import SessionForm from "./SessionForm";
 
-const AddSession = ({ formData, conferences, rooms, resources, handleChange, setMessage, setSessions, setFormData }) => {
+const AddSession = ({ formData, conferences, rooms, resources, handleChange, setSessions, setFormData }) => {
     const [conferenceRange, setConferenceRange] = useState({ startDate: null, endDate: null });
     const [existingSessions, setExistingSessions] = useState([]);
 
@@ -11,7 +12,7 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
     useEffect(() => {
         if (formData.conference) {
             const selectedConference = conferences.find((conf) => conf._id === formData.conference);
-            if (selectedConference) { // this will alyways be true
+            if (selectedConference) {
                 setConferenceRange({
                     startDate: new Date(selectedConference.startDate),
                     endDate: new Date(selectedConference.endDate),
@@ -51,11 +52,10 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
             }
         };
         fetchSessions();
-    }, [formData.conference]); // Re-fetch if conference changes
+    }, [formData.conference]);
 
     const handleAddSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
 
         // Preliminary client-side overlap check
         const sessionStart = new Date(formData.startTime);
@@ -70,7 +70,7 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
         });
 
         if (hasOverlap) {
-            setMessage("Warning: This session may overlap with an existing session in the same room. Please verify or adjust the time/room.");
+            toast.warn("This session may overlap with an existing session in the same room. Please verify or adjust the time/room.");
             return;
         }
 
@@ -98,7 +98,7 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
 
             const data = await res.json();
             if (res.ok) {
-                setMessage("Session added successfully!");
+                toast.success("Session added successfully!");
                 setFormData({
                     conference: conferences.length > 0 ? conferences[0]._id : "",
                     title: "",
@@ -118,10 +118,10 @@ const AddSession = ({ formData, conferences, rooms, resources, handleChange, set
                     setExistingSessions(sessData); // Update existing sessions
                 }
             } else {
-                setMessage(data.message || "Failed to add session");
+                toast.error(data.message || "Failed to add session");
             }
         } catch (error) {
-            setMessage("Error: " + error.message);
+            toast.error("Error: " + error.message);
         }
     };
 
