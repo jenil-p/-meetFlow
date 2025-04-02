@@ -17,6 +17,7 @@ const sessionSchema = new mongoose.Schema({
     },
   ],
   createdAt: { type: Date, default: Date.now },
+  paper: { type: mongoose.Schema.Types.ObjectId, ref: 'Paper' },
 });
 
 export default mongoose.models.Session || mongoose.model('Session', sessionSchema);
