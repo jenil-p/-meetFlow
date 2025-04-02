@@ -1,7 +1,8 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import NavMenu from "./components/NavMenu";
 import UserInfo from "./components/UserInfo";
 
@@ -9,12 +10,19 @@ export default function UserdashLayout({ children }) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session || session.user.role !== "USER") {
+      router.replace("/login");
+    }
+  }, [session, status, router]);
+
   if (status === "loading") {
-    return <p className="text-gray-800 text-center">Loading...</p>;
+    return <p className="text-center text-gray-600">Loading...</p>;
   }
 
   if (!session || session.user.role !== "USER") {
-    router.push("/login");
     return null;
   }
 

@@ -7,6 +7,7 @@ import Permissions from '@/app/models/Permissions';
 import Session from '@/app/models/Session';
 import User from '@/app/models/User';
 import nodemailer from 'nodemailer';
+import { getToken } from 'next-auth/jwt';
 
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -23,6 +24,12 @@ const transporter = nodemailer.createTransport({
 // GET: Fetch papers (admins see all, users see only APPROVED papers)
 export async function GET(req) {
   const session = await getServerSession(authOptions);
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
 
   // Check if user is authenticated
   if (!session || !session.user) {
@@ -58,6 +65,12 @@ export async function GET(req) {
 // PUT: Update paper status (admin only, for expert review)
 export async function PUT(req) {
   const session = await getServerSession(authOptions);
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
 
   // Check if user is authenticated
   if (!session || !session.user) {
@@ -135,6 +148,12 @@ export async function PUT(req) {
 // DELETE: Delete a paper (admin only)
 export async function DELETE(req) {
   const session = await getServerSession(authOptions);
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
 
   // Check if user is authenticated
   if (!session || !session.user) {

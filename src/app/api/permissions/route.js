@@ -7,6 +7,7 @@ import Paper from '@/app/models/Paper';
 import User from '@/app/models/User';
 import Session from '@/app/models/Session';
 import nodemailer from 'nodemailer';
+import { getToken } from 'next-auth/jwt';
 
 // Configure Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -23,6 +24,11 @@ const transporter = nodemailer.createTransport({
 // POST: Submit a permission request (user only)
 export async function POST(req) {
   const session = await getServerSession(authOptions);
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
   if (!session || !session.user) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -72,6 +78,11 @@ export async function POST(req) {
 // GET: Fetch permission requests (users see their own, admins see all)
 export async function GET(req) {
   const session = await getServerSession(authOptions);
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
   // Check if user is authenticated
   if (!session || !session.user) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -106,6 +117,11 @@ export async function GET(req) {
 // PUT: Approve or reject a permission request (admin only)
 export async function PUT(req) {
   const session = await getServerSession(authOptions);
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  
+      if (!token || !token.name) {
+          return NextResponse.json({ message: "Access denied" }, { status: 403 });
+      }
 
   // Check if user is authenticated
   if (!session || !session.user) {
@@ -202,4 +218,24 @@ export async function PUT(req) {
     console.error('Error updating permission request:', error);
     return NextResponse.json({ message: 'Error updating permission request: ' + error.message }, { status: 500 });
   }
+}
+
+
+
+export async function OPTIONS(req) {
+    const allowedOrigins = [
+        "http://localhost:3000", // Allow during development
+        "https://yourfrontend.com", // Replace with your actual frontend domain
+    ];
+
+    const origin = req.headers.get("origin");
+
+    return new Response(null, {
+        status: 200,
+        headers: {
+            "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://yourfrontend.com",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+    });
 }

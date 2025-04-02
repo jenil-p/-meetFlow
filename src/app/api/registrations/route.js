@@ -4,13 +4,19 @@ import connectDB from "@/app/db/connectDB";
 import Registration from "@/app/models/Registration";
 import Session from "@/app/models/Session";
 import User from "@/app/models/User";
+import { getToken } from "next-auth/jwt";
 
 connectDB();
 
-export async function DELETE(request) {
+export async function DELETE(req) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token || !token.name) {
+        return NextResponse.json({ message: "Access denied" }, { status: 403 });
+    }
       try {
     
-        const { id } = await request.json();
+        const { id } = await req.json();
         if (!id) {
           return NextResponse.json({ message: "registration ID is required" }, { status: 400 });
         }
@@ -28,6 +34,11 @@ export async function DELETE(request) {
 }
 
 export async function POST(req) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token || !token.name) {
+        return NextResponse.json({ message: "Access denied" }, { status: 403 });
+    }
     try {
         const { userEmail, sessionId } = await req.json();
 
@@ -70,6 +81,11 @@ export async function POST(req) {
 }
 
 export async function GET(req) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token || !token.name) {
+        return NextResponse.json({ message: "Access denied" }, { status: 403 });
+    }
     try {
         await connectDB();
         console.log("Fetching registrations...");
@@ -138,4 +154,22 @@ export async function GET(req) {
             { status: 500 }
         );
     }
+}
+
+export async function OPTIONS(req) {
+    const allowedOrigins = [
+        "http://localhost:3000", // Allow during development
+        "https://yourfrontend.com", // Replace with your actual frontend domain
+    ];
+
+    const origin = req.headers.get("origin");
+
+    return new Response(null, {
+        status: 200,
+        headers: {
+            "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://yourfrontend.com",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+    });
 }

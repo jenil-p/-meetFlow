@@ -9,6 +9,7 @@ import Conference from "@/app/models/Conference";
 import Registration from "@/app/models/Registration";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 // Ensure DB connection
 const ensureDbConnection = async () => {
@@ -120,7 +121,12 @@ const checkResourceAvailability = async (resources, startTime, endTime, excludeS
 };
 
 // GET: Fetch all sessions (accessible to both users and admins)
-export async function GET() {
+export async function GET(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token || !token.name) {
+    return NextResponse.json({ message: "Access denied" }, { status: 403 });
+  }
   try {
     await ensureDbConnection();
     console.log("Fetching sessions...");
@@ -139,6 +145,11 @@ export async function GET() {
 
 // POST: Create new session (admin only)
 export async function POST(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token || !token.name) {
+    return NextResponse.json({ message: "Access denied" }, { status: 403 });
+  }
   try {
     const { isAdmin: adminCheck, session } = await isAdmin();
     if (!adminCheck) {
@@ -280,6 +291,11 @@ export async function POST(req) {
 
 // PUT: Update a session by ID (admin only)
 export async function PUT(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token || !token.name) {
+    return NextResponse.json({ message: "Access denied" }, { status: 403 });
+  }
   try {
     const { isAdmin: adminCheck } = await isAdmin();
     if (!adminCheck) {
@@ -421,6 +437,11 @@ export async function PUT(req) {
 
 // DELETE: Remove a session by ID (admin only)
 export async function DELETE(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token || !token.name) {
+    return NextResponse.json({ message: "Access denied" }, { status: 403 });
+  }
   try {
     const { isAdmin: adminCheck } = await isAdmin();
     if (!adminCheck) {
@@ -464,3 +485,21 @@ export async function DELETE(req) {
     );
   }
 }
+
+// export async function OPTIONS(req) {
+//   const allowedOrigins = [
+//       "http://localhost:3000", // Allow during development
+//       "https://yourfrontend.com", // Replace with your actual frontend domain
+//   ];
+
+//   const origin = req.headers.get("origin");
+
+//   return new Response(null, {
+//       status: 200,
+//       headers: {
+//           "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://yourfrontend.com",
+//           "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+//           "Access-Control-Allow-Headers": "Content-Type, Authorization",
+//       },
+//   });
+// }

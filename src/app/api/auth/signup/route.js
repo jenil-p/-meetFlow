@@ -2,8 +2,18 @@ import { NextResponse } from "next/server";
 import connectDB from "@/app/db/connectDB";
 import User from "@/app/models/User";
 import bcrypt from "bcryptjs";
+import { getToken } from "next-auth/jwt";
 
 export async function POST(req) {
+    
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    console.log(token)
+
+    if (!token || !token.name) {
+        return NextResponse.json({ message: "Access denied" }, { status: 403 });
+    }
+
     await connectDB();
 
     try {
@@ -38,4 +48,22 @@ export async function POST(req) {
         console.error("Error registering user:", error);
         return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
     }
+}
+
+export async function OPTIONS(req) {
+    const allowedOrigins = [
+        "http://localhost:3000", // Allow during development
+        "https://yourfrontend.com", // Replace with your actual frontend domain
+    ];
+
+    const origin = req.headers.get("origin");
+
+    return new Response(null, {
+        status: 200,
+        headers: {
+            "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://yourfrontend.com",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+    });
 }
