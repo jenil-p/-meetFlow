@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Link from "next/link";
+import Loading from "../userdash/components/Loading";
 
 export default function AdminLayout({ children }) {
     const { data: session, status } = useSession();
@@ -19,7 +20,7 @@ export default function AdminLayout({ children }) {
     }, [session, status]);
 
     if (status === "loading") {
-        return <p className="text-center text-gray-600">Loading...</p>;
+        return <Loading/>
     }
 
     const handleLogout = () => {
