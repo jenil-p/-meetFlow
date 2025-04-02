@@ -27,7 +27,7 @@ export default function UserdashLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black">
+    <div className="min-h-screen bg-white text-black">
       <div className="max-w-7xl mx-auto py-12 px-6 lg:px-12">
         <h1 className="text-4xl playfair-display-sc-regular font-bold mb-6 text-gray-800">
           User Dashboard
@@ -35,7 +35,7 @@ export default function UserdashLayout({ children }) {
         <NavMenu />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <UserInfo user={session.user} />
-          <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+          <div className="lg:col-span-2 bg-gray-100 p-6 rounded-lg shadow-md transition-all duration-300">
             {children}
           </div>
         </div>

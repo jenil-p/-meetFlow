@@ -2,7 +2,7 @@ import React from "react";
 
 export default function UserInfo({ user }) {
   return (
-    <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+    <div className="lg:col-span-1 bg-gray-100 p-6 rounded-lg shadow-md">
       <h2 className="text-xl playfair-display-sc-regular font-semibold mb-4 text-gray-800">
         User Info
       </h2>
