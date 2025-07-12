@@ -96,12 +96,12 @@ export async function GET(req) {
     if (session.user.role === 'ADMIN') {
       // Admins can see all permission requests
       permissions = await Permissions.find()
-        .populate('user', 'name email')
+        .populate('user', 'username email')
         .populate('session', 'title startTime endTime')
     } else if (session.user.role === 'USER') {
       // Users can only see their own permission requests
       permissions = await Permissions.find({ user: session.user.id })
-        .populate('user', 'name email')
+        .populate('user', 'username email')
         .populate('session', 'title startTime endTime');
     } else {
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 });

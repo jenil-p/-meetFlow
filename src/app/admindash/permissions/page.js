@@ -78,7 +78,7 @@ const Permissions = () => {
               <h3 className="text-lg font-bold mb-2">{permission.title}</h3>
               <p className="text-gray-700">
                 <span className="font-bold">User:</span>{' '}
-                {permission.user?.name || 'Unknown'}
+                {permission.user?.username || 'Unknown'}
               </p>
               <p className="text-gray-700">
                 <span className="font-bold">Email:</span>{' '}
